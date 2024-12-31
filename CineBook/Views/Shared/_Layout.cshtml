@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - CineBook</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/CineBook.styles.css" asp-append-version="true" />
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-purple-100 text-gray-800 min-h-screen">
+    <header class="bg-background shadow-lg" x-data="{ isOpen: false }">
+        <nav class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center">
+                <a class="text-primary font-bold text-3xl" asp-action="Index" asp-controller="Home">CineBook</a>
+            </div>
+
+            <!-- Mobile menu button -->
+            <button  class="md:hidden text-white hover:text-accent focus:outline-none">
+                <svg class="h-6 w-6 fill-current" viewBox="0 0 24 24">
+                    <path x-show="!isOpen" fill-rule="evenodd" clip-rule="evenodd" d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h16v2H4v-2z"></path>
+                    <path x-show="isOpen" fill-rule="evenodd" clip-rule="evenodd" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+
+            <!-- Desktop menu -->
+            <div class="hidden md:flex items-center space-x-6">
+                <a href="#" class="text-black hover:text-accent transition duration-300">Now Showing</a>
+                <a href="#" class="text-black hover:text-accent transition duration-300">Coming Soon</a>
+                <a href="#" class="text-black hover:text-accent transition duration-300">Cinemas</a>
+                <a href="#" class="text-black hover:text-accent transition duration-300">Offers</a>
+                <a  class="bg-primary text-white px-6 py-2 rounded-full hover:bg-secondary transition duration-300" asp-action="signin" asp-controller="Auth">Login</a>
+            </div>
+        </nav>
+
+        <!-- Mobile menu -->
+     
+    </header>
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+   
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
