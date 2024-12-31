@@ -29,6 +29,8 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 
+builder.Services.AddScoped<IEmailService, EmailService>();
+
 
 var app = builder.Build();
 
@@ -39,6 +41,34 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+app.MapGet("/", (HttpContext context) =>
+{
+    // Check if the user is authenticated
+    if (!context.User.Identity.IsAuthenticated)
+    {
+        // Redirect unauthenticated users to the login page
+        context.Response.Redirect("/Auth/signin");
+        return Task.CompletedTask;
+    }
+
+    else if (context.User.Identity.IsAuthenticated)
+    {
+        if (context.Request.Path.StartsWithSegments("/Auth/signin") || context.Request.Path.StartsWithSegments("/Auth/signup"))
+        {
+            context.Response.Redirect("/Home/Index");
+            return Task.CompletedTask;
+        }
+
+        context.Response.Redirect("/Home/Index");
+        return Task.CompletedTask;
+    }
+
+    context.Response.Redirect("/Home/Index");
+    return Task.CompletedTask;
+});
+
+
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

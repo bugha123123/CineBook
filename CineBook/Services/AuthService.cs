@@ -5,18 +5,20 @@ using Microsoft.AspNetCore.Identity;
 
 namespace CineBook.Services
 {
-    public class AuthService :IAuthService
+    public class AuthService : IAuthService
     {
 
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
+        private readonly IEmailService emailService;
 
-        public AuthService(IHttpContextAccessor httpContextAccessor, UserManager<User> userManager, SignInManager<User> signInManager)
+        public AuthService(IHttpContextAccessor httpContextAccessor, UserManager<User> userManager, SignInManager<User> signInManager, IEmailService emailService)
         {
             _httpContextAccessor = httpContextAccessor;
             _userManager = userManager;
             _signInManager = signInManager;
+            this.emailService = emailService;
         }
 
         public async Task<User?> GetLoggedInUserAsync()
@@ -55,6 +57,7 @@ namespace CineBook.Services
             if (result.Succeeded)
             {
                 await _signInManager.SignInAsync(user, isPersistent: false);
+                await SendWelcomeEmailToUser(registerViewModel.Email);
 
             }
         }
@@ -72,6 +75,70 @@ namespace CineBook.Services
 
         public async Task LogOutUser()
         {
+            await _signInManager.SignOutAsync();
         }
+
+        public async Task SendWelcomeEmailToUser(string email)
+        {
+            var htmlBody = $@"
+<html>
+<head>
+    <style>
+        .email-container {{
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+        }}
+        .header {{
+            background-color: #6b46c1;
+            color: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }}
+        .button {{
+            display: inline-block;
+            background-color: #6b46c1;
+            color: black;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }}
+        .button:hover {{
+            background-color: #805ad5;
+        }}
+        .footer {{
+            font-size: 0.9em;
+            color: #b3b3b3;
+            margin-top: 30px;
+        }}
+    </style>
+</head>
+<body>
+    <div class='email-container'>
+        <div class='header'>
+            <h2>Welcome to Spooky Bookstore!</h2>
+        </div>
+        <p>Hi there!</p>
+        <p>We're excited to have you as a new member of the Spooky Bookstore community! Get ready to dive into the world of books and enjoy a wide selection of genres, discounts, and more!</p>
+        <p>To get started, click the button below and explore our latest arrivals and special offers:</p>
+        <a href='https://localhost:7194/Home/Index' class='button'>Start Shopping</a>
+        <p class='footer'>If you have any questions or need help, feel free to reach out to our support team.</p>
+    </div>
+</body>
+</html>
+";
+
+             await emailService.SendEmailAsync(email, "Welcome to CineBook!", htmlBody);
+        }
+
     }
 }

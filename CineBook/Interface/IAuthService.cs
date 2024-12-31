@@ -9,5 +9,7 @@ namespace CineBook.Interface
         Task RegisterUser(RegisterViewModel registerViewModel);
         Task LogInUser(LogInViewModel logInViewModel);
         Task LogOutUser();
+
+        Task SendWelcomeEmailToUser(string email);
     }
 }
