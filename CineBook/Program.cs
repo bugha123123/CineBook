@@ -30,8 +30,8 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddScoped<IEmailService, EmailService>();
-
-
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<DatabaseSeeder>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -68,7 +68,12 @@ app.MapGet("/", (HttpContext context) =>
     return Task.CompletedTask;
 });
 
-
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContextion>();
+    var seeder = scope.ServiceProvider.GetRequiredService<DatabaseSeeder>();
+    await seeder.SeedDataAsync(); // Seed data into the database
+}
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

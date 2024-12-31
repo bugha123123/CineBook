@@ -9,5 +9,10 @@ namespace CineBook.ApplicationDbContext
 
         public AppDbContextion(DbContextOptions<AppDbContextion> options) : base(options) { }
 
+
+        public DbSet<Movie> Movies { get; set; }
+
+
+        public DbSet<Seat> Seats { get; set; }
     }
 }
