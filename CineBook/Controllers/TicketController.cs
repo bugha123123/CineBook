@@ -13,10 +13,7 @@ namespace CineBook.Controllers
             this.ticketService = ticketService;
         }
 
-        public IActionResult TicketReservation()
-        {
-            return View();
-        }
+    
         public async Task<IActionResult> BookingHistory()
         {
             var BookingHistoryForUser = await ticketService.GetBookingHistoryForUser();

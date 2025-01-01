@@ -42,7 +42,7 @@
                                     <div class="card-body text-center">
                                         <h5 class="card-title">@item.movie.Title</h5>
                                         <p class="card-text">Release Date: @item.movie.ReleaseDate.ToString("MMMM dd, yyyy")</p>
-                                        <a class="btn btn-primary" asp-action="TicketReservation" asp-controller="Ticket" asp-route-MovieId="@item.movie.Id">Buy Ticket</a>
+                                        <a class="btn btn-primary" asp-action="Seats" asp-controller="Ticket" asp-route-MovieId="@item.movie.Id">Choose seats</a>
                                     </div>
                                 </div>
                             </div>
