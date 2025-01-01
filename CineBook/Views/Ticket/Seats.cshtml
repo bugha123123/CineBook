@@ -1,4 +1,20 @@
-﻿<div class="container mx-auto p-4">
+﻿@using CineBook.Interface
+@using Microsoft.AspNetCore.Components
+@inject ITicketService _ticketService
+
+@{
+    // Fetching the movie ID from the URL
+    string urlQuery = Context.Request.Query["MovieId"];
+    int parsedUrlQuery = int.Parse(urlQuery);
+
+    // Fetching seats associated with the Movie ID
+    var seats = _ticketService.GetSeatsByMovieId(parsedUrlQuery).GetAwaiter().GetResult();
+
+    // Initialize a list to store selected seat IDs
+    List<int> selectedSeatIds = new List<int>();
+}
+
+<div class="container mx-auto p-4">
     <h1 class="text-3xl font-bold mb-6 text-center">Select Your Seats</h1>
     <div class="mb-6 flex justify-center">
         <div class="w-24 h-2 bg-gray-300 rounded mb-10"></div>
@@ -6,65 +22,22 @@
 
     <!-- Seat Grid -->
     <div class="grid grid-cols-10 gap-2 mb-6 max-w-4xl mx-auto">
-        <!-- Row A -->
-        <div class="bg-green-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-green-600 flex items-center justify-center text-white font-bold" title="A1">A1</div>
-        <div class="bg-green-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-green-600 flex items-center justify-center text-white font-bold" title="A2">A2</div>
-        <div class="bg-blue-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-blue-600 flex items-center justify-center text-white font-bold" title="A3">A3</div>
-        <div class="bg-green-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-green-600 flex items-center justify-center text-white font-bold" title="A4">A4</div>
-        <div class="bg-gray-500 w-12 h-12 m-1 rounded-t-lg cursor-not-allowed flex items-center justify-center text-white font-bold" title="A5">A5</div>
-        <div class="bg-green-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-green-600 flex items-center justify-center text-white font-bold" title="A6">A6</div>
-        <div class="bg-green-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-green-600 flex items-center justify-center text-white font-bold" title="A7">A7</div>
-        <div class="bg-green-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-green-600 flex items-center justify-center text-white font-bold" title="A8">A8</div>
-        <div class="bg-gray-500 w-12 h-12 m-1 rounded-t-lg cursor-not-allowed flex items-center justify-center text-white font-bold" title="A9">A9</div>
-        <div class="bg-green-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-green-600 flex items-center justify-center text-white font-bold" title="A10">A10</div>
-
-        <!-- Row B -->
-        <div class="bg-green-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-green-600 flex items-center justify-center text-white font-bold" title="B1">B1</div>
-        <div class="bg-blue-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-blue-600 flex items-center justify-center text-white font-bold" title="B2">B2</div>
-        <div class="bg-green-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-green-600 flex items-center justify-center text-white font-bold" title="B3">B3</div>
-        <div class="bg-green-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-green-600 flex items-center justify-center text-white font-bold" title="B4">B4</div>
-        <div class="bg-green-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-green-600 flex items-center justify-center text-white font-bold" title="B5">B5</div>
-        <div class="bg-gray-500 w-12 h-12 m-1 rounded-t-lg cursor-not-allowed flex items-center justify-center text-white font-bold" title="B6">B6</div>
-        <div class="bg-green-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-green-600 flex items-center justify-center text-white font-bold" title="B7">B7</div>
-        <div class="bg-green-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-green-600 flex items-center justify-center text-white font-bold" title="B8">B8</div>
-        <div class="bg-green-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-green-600 flex items-center justify-center text-white font-bold" title="B9">B9</div>
-        <div class="bg-blue-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-blue-600 flex items-center justify-center text-white font-bold" title="B10">B10</div>
-
-        <!-- Row C -->
-        <div class="bg-gray-500 w-12 h-12 m-1 rounded-t-lg cursor-not-allowed flex items-center justify-center text-white font-bold" title="C1">C1</div>
-        <div class="bg-green-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-green-600 flex items-center justify-center text-white font-bold" title="C2">C2</div>
-        <div class="bg-green-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-green-600 flex items-center justify-center text-white font-bold" title="C3">C3</div>
-        <div class="bg-blue-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-blue-600 flex items-center justify-center text-white font-bold" title="C4">C4</div>
-        <div class="bg-green-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-green-600 flex items-center justify-center text-white font-bold" title="C5">C5</div>
-        <div class="bg-green-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-green-600 flex items-center justify-center text-white font-bold" title="C6">C6</div>
-        <div class="bg-green-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-green-600 flex items-center justify-center text-white font-bold" title="C7">C7</div>
-        <div class="bg-gray-500 w-12 h-12 m-1 rounded-t-lg cursor-not-allowed flex items-center justify-center text-white font-bold" title="C8">C8</div>
-        <div class="bg-green-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-green-600 flex items-center justify-center text-white font-bold" title="C9">C9</div>
-        <div class="bg-green-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-green-600 flex items-center justify-center text-white font-bold" title="C10">C10</div>
-
-        <!-- Row D -->
-        <div class="bg-green-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-green-600 flex items-center justify-center text-white font-bold" title="D1">D1</div>
-        <div class="bg-green-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-green-600 flex items-center justify-center text-white font-bold" title="D2">D2</div>
-        <div class="bg-gray-500 w-12 h-12 m-1 rounded-t-lg cursor-not-allowed flex items-center justify-center text-white font-bold" title="D3">D3</div>
-        <div class="bg-green-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-green-600 flex items-center justify-center text-white font-bold" title="D4">D4</div>
-        <div class="bg-blue-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-blue-600 flex items-center justify-center text-white font-bold" title="D5">D5</div>
-        <div class="bg-green-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-green-600 flex items-center justify-center text-white font-bold" title="D6">D6</div>
-        <div class="bg-green-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-green-600 flex items-center justify-center text-white font-bold" title="D7">D7</div>
-        <div class="bg-green-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-green-600 flex items-center justify-center text-white font-bold" title="D8">D8</div>
-        <div class="bg-blue-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-blue-600 flex items-center justify-center text-white font-bold" title="D9">D9</div>
-        <div class="bg-green-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-green-600 flex items-center justify-center text-white font-bold" title="D10">D10</div>
-
-        <!-- Row E -->
-        <div class="bg-green-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-green-600 flex items-center justify-center text-white font-bold" title="E1">E1</div>
-        <div class="bg-blue-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-blue-600 flex items-center justify-center text-white font-bold" title="E2">E2</div>
-        <div class="bg-green-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-green-600 flex items-center justify-center text-white font-bold" title="E3">E3</div>
-        <div class="bg-green-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-green-600 flex items-center justify-center text-white font-bold" title="E4">E4</div>
-        <div class="bg-gray-500 w-12 h-12 m-1 rounded-t-lg cursor-not-allowed flex items-center justify-center text-white font-bold" title="E5">E5</div>
-        <div class="bg-green-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-green-600 flex items-center justify-center text-white font-bold" title="E6">E6</div>
-        <div class="bg-green-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-green-600 flex items-center justify-center text-white font-bold" title="E7">E7</div>
-        <div class="bg-blue-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-blue-600 flex items-center justify-center text-white font-bold" title="E8">E8</div>
-        <div class="bg-green-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-green-600 flex items-center justify-center text-white font-bold" title="E9">E9</div>
-        <div class="bg-green-500 w-12 h-12 m-1 rounded-t-lg cursor-pointer hover:bg-green-600 flex items-center justify-center text-white font-bold" title="E10">E10</div>
+        @if (seats != null)
+        {
+            @foreach (var seat in seats)
+            {
+                <div id="seat-@seat.Id"
+                     class="@GetSeatClass(seat.IsAvailable) w-12 h-12 m-1 rounded-t-lg @GetSeatCursor(seat.IsAvailable) flex items-center justify-center text-white font-bold"
+                     title="@seat.Number"
+                     onclick="selectSeat(@seat.Id, @seat.IsAvailable.ToString().ToLower())">
+                    @seat.Number
+                </div>
+            }
+        }
+        else
+        {
+            <p class="text-center text-lg">Loading seats...</p>
+        }
     </div>
 
     <!-- Legend -->
@@ -74,22 +47,106 @@
             <span class="text-lg">Available</span>
         </div>
         <div class="flex items-center">
-            <div class="w-6 h-6 bg-blue-500 mr-2"></div>
-            <span class="text-lg">Selected</span>
-        </div>
-        <div class="flex items-center">
             <div class="w-6 h-6 bg-gray-500 mr-2"></div>
             <span class="text-lg">Booked</span>
         </div>
-    </div>
-
-    <!-- Booking Summary -->
-    <div class="mt-8 p-6 bg-white rounded-lg shadow-md max-w-md mx-auto">
-        <h2 class="text-2xl font-bold mb-4">Booking Summary</h2>
-        <p class="text-lg mb-2">Selected Seats: A3, B2, B10, C4, D5, D9, E2, E8</p>
-        <p class="text-lg mb-4">Total Price: $80</p>
-        <button class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg text-lg">
-            Confirm Booking
-        </button>
+        <div class="flex items-center">
+            <div class="w-6 h-6 bg-blue-500 mr-2"></div>
+            <span class="text-lg">Selected</span>
+        </div>
     </div>
 </div>
+
+<!-- Booking Summary -->
+<div class="mt-8 p-6 bg-white rounded-lg shadow-md max-w-md mx-auto">
+    <h2 class="text-2xl font-bold mb-4">Booking Summary</h2>
+    <p class="text-lg mb-2" id="selected-seats">Selected Seats: None</p>
+    <p class="text-lg mb-4">Total Price: <span id="total-price">$0</span></p>
+    <button class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg text-lg"
+            onclick="confirmBooking()">
+        Confirm Booking
+    </button>
+</div>
+
+<script>
+    // Store selected seat IDs
+    let selectedSeatIds = [];
+    const seatPrice = 10; // Example seat price
+
+    function selectSeat(seatId, isAvailable) {
+        if (!isAvailable) {
+            alert("This seat is already booked!");
+            return;
+        }
+
+        const seatDiv = document.getElementById(`seat-${seatId}`);
+        const index = selectedSeatIds.indexOf(seatId);
+
+        if (index > -1) {
+            // Deselect seat
+            selectedSeatIds.splice(index, 1);
+            seatDiv.classList.remove("bg-blue-500");
+            seatDiv.classList.add("bg-green-500");
+        } else {
+            // Select seat
+            selectedSeatIds.push(seatId);
+            seatDiv.classList.remove("bg-green-500");
+            seatDiv.classList.add("bg-blue-500");
+        }
+
+        updateSummary();
+    }
+
+    function updateSummary() {
+        const selectedSeatsText = selectedSeatIds.length > 0
+            ? selectedSeatIds.join(", ")
+            : "None";
+
+        const totalPrice = selectedSeatIds.length * seatPrice;
+
+        document.getElementById("selected-seats").innerText = `Selected Seats: ${selectedSeatsText}`;
+        document.getElementById("total-price").innerText = `$${totalPrice}`;
+    }
+
+    function confirmBooking() {
+        if (selectedSeatIds.length === 0) {
+            alert("Please select at least one seat to proceed with booking.");
+            return;
+        }
+
+        // Send selectedSeatIds to the server for booking
+        fetch('/Ticket/BookTicket', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(selectedSeatIds)
+        })
+        .then(response => {
+            if (response.ok) {
+                alert("Booking successful!");
+                window.location.href = "/Home/Index"; // Redirect after booking
+            } else {
+                alert("Failed to book tickets. Please try again.");
+            }
+        })
+        .catch(error => {
+            console.error("Error booking tickets:", error);
+            alert("An error occurred. Please try again.");
+        });
+    }
+</script>
+
+@functions {
+    // Method to determine the CSS class for seat availability
+    private string GetSeatClass(bool isAvailable)
+    {
+        return isAvailable ? "bg-green-500 hover:bg-green-600" : "bg-gray-500 cursor-not-allowed";
+    }
+
+    // Method to determine the cursor style for seat availability
+    private string GetSeatCursor(bool isAvailable)
+    {
+        return isAvailable ? "cursor-pointer" : "cursor-not-allowed";
+    }
+}
