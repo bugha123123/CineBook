@@ -16,6 +16,8 @@
 
         public List<Seat> BookedSeats { get; set; }
 
-        
+        public List<int> BookedSeatNumbers { get; set; }
+
+
     }
 }

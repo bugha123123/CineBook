@@ -17,8 +17,17 @@ namespace CineBook.Controllers
         {
             return View();
         }
+        public async Task<IActionResult> BookingHistory()
+        {
+            var BookingHistoryForUser = await ticketService.GetBookingHistoryForUser();
+            return View(BookingHistoryForUser);
+        }
 
-         
+        public async Task<IActionResult> MovieDetails(int MovieId)
+        {
+            var MovieById = await ticketService.GetMovieById(MovieId);  
+            return View(MovieById);
+        }
         public IActionResult Seats()
         {
             return View();

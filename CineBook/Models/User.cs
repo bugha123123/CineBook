@@ -5,5 +5,8 @@ namespace CineBook.Models
 {
     public class User : IdentityUser
     {
+        public List<Booking> booking { get; set; }
+
+        
     }
 }

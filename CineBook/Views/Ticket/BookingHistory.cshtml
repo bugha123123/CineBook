@@ -1,0 +1,62 @@
+﻿@model List<Booking>
+
+<div class="container mx-auto px-4 py-8">
+    <header class="mb-8">
+        <nav class="flex justify-between items-center">
+            <h1 class="text-3xl font-bold">Booking History</h1>
+            <a  class="text-blue-500 hover:text-blue-600 transition-colors duration-300" asp-action="Index" asp-controller="">
+                &larr; Back to Movies
+            </a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="bg-white shadow-md rounded-lg overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                            <th class="py-3 px-6 text-left">Movie</th>
+                            <th class="py-3 px-6 text-left">Date</th>
+                            <th class="py-3 px-6 text-left">Time</th>
+                            <th class="py-3 px-6 text-left">Seats</th>
+                            <th class="py-3 px-6 text-left">Total</th>
+                           
+                        </tr>
+                    </thead>
+                    <tbody class="text-gray-600 text-sm font-light">
+                        @foreach (var item in Model)
+                        { 
+                            <tr class="border-b border-gray-200 hover:bg-gray-100">
+                            <td class="py-3 px-6 text-left whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div class="mr-2">
+                                            <img class="w-8 h-12 object-cover" src="@item.movie.MovieImage" alt="Inception">
+                                    </div>
+                                    <span class="font-medium">@item.movie.Title</span>
+                                </div>
+                            </td>
+                            <td class="py-3 px-6 text-left">@item.movie.ReleaseDate</td>
+                            <td class="py-3 px-6 text-left">@item.movie.RunTime</td>
+
+                                <td class="py-3 px-6 text-left">
+                                    @string.Join(", ", @item.BookedSeatNumbers)
+                                </td>
+
+                                <td class="py-3 px-6 text-left">
+                                    @(@item.BookedSeats.Count() * 10)   
+                                </td>
+
+
+                        </tr>
+                            
+                        }
+                      
+                       
+                    </tbody>
+                </table>
+            </div>
+        </div>
+      
+    </main>
+</div>

@@ -30,6 +30,10 @@ namespace CineBook.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("BookedSeatNumbers")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("MovieId")
                         .HasColumnType("int");
 
@@ -54,6 +58,10 @@ namespace CineBook.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Genre")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -64,6 +72,9 @@ namespace CineBook.Migrations
 
                     b.Property<DateTime>("ReleaseDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("RunTime")
+                        .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -92,6 +103,9 @@ namespace CineBook.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("Number")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SeatPrice")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -310,7 +324,7 @@ namespace CineBook.Migrations
                         .IsRequired();
 
                     b.HasOne("CineBook.Models.User", "user")
-                        .WithMany()
+                        .WithMany("booking")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -322,7 +336,7 @@ namespace CineBook.Migrations
 
             modelBuilder.Entity("CineBook.Models.Seat", b =>
                 {
-                    b.HasOne("CineBook.Models.Booking", null)
+                    b.HasOne("CineBook.Models.Booking", "Booking")
                         .WithMany("BookedSeats")
                         .HasForeignKey("BookingId");
 
@@ -331,6 +345,8 @@ namespace CineBook.Migrations
                         .HasForeignKey("MovieId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Booking");
 
                     b.Navigation("Movie");
                 });
@@ -394,6 +410,11 @@ namespace CineBook.Migrations
             modelBuilder.Entity("CineBook.Models.Movie", b =>
                 {
                     b.Navigation("Seats");
+                });
+
+            modelBuilder.Entity("CineBook.Models.User", b =>
+                {
+                    b.Navigation("booking");
                 });
 #pragma warning restore 612, 618
         }

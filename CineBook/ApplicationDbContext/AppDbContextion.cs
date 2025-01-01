@@ -16,5 +16,7 @@ namespace CineBook.ApplicationDbContext
         public DbSet<Seat> Seats { get; set; }
 
         public DbSet<Booking> Bookings { get; set; }
+
+      
     }
 }

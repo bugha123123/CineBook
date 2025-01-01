@@ -28,7 +28,7 @@
                 <a href="#" class="text-black hover:text-accent transition duration-300" style="text-decoration:none;">Now Showing</a>
                 <a href="#" class="text-black hover:text-accent transition duration-300" style="text-decoration:none;">Coming Soon</a>
                 <a href="#" class="text-black hover:text-accent transition duration-300" style="text-decoration:none;">Cinemas</a>
-                <a href="#" class="text-black hover:text-accent transition duration-300" style="text-decoration:none;">Offers</a>
+                <a  class="text-black hover:text-accent transition duration-300" style="text-decoration:none;" asp-action="BookingHistory" asp-controller="Ticket">History</a>
                 @if (!User.Identity.IsAuthenticated)
                 {
                     <a class="bg-primary text-white px-6 py-2 rounded-full hover:bg-secondary transition duration-300" asp-action="signin" asp-controller="Auth">Log in</a>

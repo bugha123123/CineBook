@@ -1,14 +1,13 @@
-﻿using CineBook.ApplicationDbContext;
-using CineBook.Models;
-using Microsoft.EntityFrameworkCore;
-using System.Net.Http.Headers;
+﻿using CineBook.Models;
 using System.Text.Json;
+using System;
+using CineBook.ApplicationDbContext;
 
 public class DatabaseSeeder
 {
-    private readonly AppDbContextion _context;
+    private readonly AppDbContextion _context;  // Ensure AppDbContext is correctly used
     private readonly IHttpClientFactory _httpClientFactory;
-    private readonly string _apiKey = "ba78b82d72bb7ddb477af4a06fd9a3f7"; // Use your TMDb API Key
+    private readonly string _apiKey = "ba78b82d72bb7ddb477af4a06fd9a3f7"; // TMDb API Key
 
     public DatabaseSeeder(AppDbContextion context, IHttpClientFactory httpClientFactory)
     {
@@ -23,7 +22,7 @@ public class DatabaseSeeder
         {
             var client = _httpClientFactory.CreateClient();
 
-            // Fetch popular movies data from TMDb API (or use any other endpoint you prefer)
+            // Fetch popular movies data from TMDb API
             var movieResponse = await client.GetAsync("https://api.themoviedb.org/3/movie/popular?api_key=" + _apiKey + "&language=en-US&page=1");
 
             if (movieResponse.IsSuccessStatusCode)
@@ -33,10 +32,20 @@ public class DatabaseSeeder
                 // Check if "results" is present in the response
                 if (movieData.TryGetProperty("results", out var movies))
                 {
+                    // Optionally, fetch genre details (if needed)
+                    var genreResponse = await client.GetAsync("https://api.themoviedb.org/3/genre/movie/list?api_key=" + _apiKey + "&language=en-US");
+                    var genreData = await genreResponse.Content.ReadFromJsonAsync<JsonElement>();
+                    var genres = genreData.GetProperty("genres").EnumerateArray().ToDictionary(g => g.GetProperty("id").GetInt32(), g => g.GetProperty("name").GetString());
+
+                    var movieList = new List<Movie>();
+                    var seatList = new List<Seat>();
+
                     foreach (var movie in movies.EnumerateArray())
                     {
                         var title = movie.GetProperty("title").GetString();
-                        var genre = string.Join(", ", movie.GetProperty("genre_ids").EnumerateArray().Select(g => g.ToString())); // genre_ids are IDs, you can fetch names separately if needed
+                        var genreIds = movie.GetProperty("genre_ids").EnumerateArray();
+                        var genreNames = genreIds.Select(g => genres.ContainsKey(g.GetInt32()) ? genres[g.GetInt32()] : "").Where(g => !string.IsNullOrEmpty(g));
+                        var genre = string.Join(", ", genreNames);
                         var releaseDateStr = movie.GetProperty("release_date").GetString();
 
                         // Convert release_date string to DateTime
@@ -45,34 +54,49 @@ public class DatabaseSeeder
                         var movieId = movie.GetProperty("id").GetInt32();
                         var posterPath = movie.GetProperty("poster_path").GetString();
                         var imageUrl = $"https://image.tmdb.org/t/p/w500{posterPath}";
-                        // Create new movie object
-                        var newMovie = new Movie
-                        {
-                            Title = title,
-                            Genre = genre,
-                            ReleaseDate = releaseDate, // Store as DateTime
-                            MovieImage = imageUrl // Add the image URL
-                        };
-                        _context.Movies.Add(newMovie);
-                        await _context.SaveChangesAsync(); // Save movie to DB
 
-                        // Create a list of seats (50 seats as placeholders)
-                        var seats = new List<Seat>();
+                        // Fetch detailed movie information (description, runtime, etc.)
+                        var movieDetailsResponse = await client.GetAsync($"https://api.themoviedb.org/3/movie/{movieId}?api_key={_apiKey}&language=en-US");
 
-                        for (int i = 1; i <= 50; i++)
+                        if (movieDetailsResponse.IsSuccessStatusCode)
                         {
-                            string seatNumber = $"A{i}";
-                            seats.Add(new Seat
+                            var movieDetailsData = await movieDetailsResponse.Content.ReadFromJsonAsync<JsonElement>();
+
+                            var description = movieDetailsData.GetProperty("overview").GetString();
+                            var runtime = movieDetailsData.GetProperty("runtime").GetInt32(); // Runtime in minutes
+
+                            // Create new movie object
+                            var newMovie = new Movie
                             {
-                                Number = i, 
-                                IsAvailable = true,
-                                MovieId = newMovie.Id
-                            });
-                        }
+                                Title = title,
+                                Genre = genre,
+                                ReleaseDate = releaseDate, // Store as DateTime
+                                MovieImage = imageUrl, // Add the image URL
+                                Description = description, // Add the description
+                                RunTime = runtime // Add the runtime (in minutes)
+                            };
 
-                        _context.Seats.AddRange(seats);
-                        await _context.SaveChangesAsync(); 
+                            movieList.Add(newMovie);
+
+                            // Create a list of seats (50 seats as placeholders)
+                            for (int i = 1; i <= 50; i++)
+                            {
+                                seatList.Add(new Seat
+                                {
+                                    Number = i,
+                                    IsAvailable = true,
+                                    Movie = newMovie
+                                });
+                            }
+                        }
                     }
+
+                    // Save the movies and seats in bulk
+                    _context.Movies.AddRange(movieList);
+                    _context.Seats.AddRange(seatList);
+
+                    // Save all changes in one go
+                    await _context.SaveChangesAsync();
                 }
             }
         }
