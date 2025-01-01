@@ -9,14 +9,13 @@
     <link rel="stylesheet" href="~/CineBook.styles.css" asp-append-version="true" />
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-purple-100 text-gray-800 min-h-screen">
+<body class="bg-purple-100 text-gray-800 ">
     <header class="bg-background shadow-lg">
         <nav class="container mx-auto px-4 py-4 flex justify-between items-center">
             <div class="flex items-center">
-                <a class="text-primary font-bold text-3xl" asp-action="Index" asp-controller="Home">CineBook</a>
+                <a class="text-primary font-bold text-3xl" style="text-decoration:none;" asp-action="Index" asp-controller="Home">CineBook</a>
             </div>
 
-            <!-- Mobile menu button -->
             <input type="checkbox" id="menu-toggle" class="hidden peer" />
             <label for="menu-toggle" class="md:hidden text-white hover:text-accent focus:outline-none cursor-pointer">
                 <svg class="h-6 w-6 fill-current" viewBox="0 0 24 24">
@@ -25,12 +24,11 @@
                 </svg>
             </label>
 
-            <!-- Desktop menu -->
             <div class="hidden md:flex items-center space-x-6">
-                <a href="#" class="text-black hover:text-accent transition duration-300">Now Showing</a>
-                <a href="#" class="text-black hover:text-accent transition duration-300">Coming Soon</a>
-                <a href="#" class="text-black hover:text-accent transition duration-300">Cinemas</a>
-                <a href="#" class="text-black hover:text-accent transition duration-300">Offers</a>
+                <a href="#" class="text-black hover:text-accent transition duration-300" style="text-decoration:none;">Now Showing</a>
+                <a href="#" class="text-black hover:text-accent transition duration-300" style="text-decoration:none;">Coming Soon</a>
+                <a href="#" class="text-black hover:text-accent transition duration-300" style="text-decoration:none;">Cinemas</a>
+                <a href="#" class="text-black hover:text-accent transition duration-300" style="text-decoration:none;">Offers</a>
                 @if (!User.Identity.IsAuthenticated)
                 {
                     <a class="bg-primary text-white px-6 py-2 rounded-full hover:bg-secondary transition duration-300" asp-action="signin" asp-controller="Auth">Log in</a>
@@ -63,7 +61,7 @@
         </div>
     </header>
 
-    <div class="container">
+    <div class="container mt-5">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>

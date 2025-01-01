@@ -1,4 +1,64 @@
-﻿@{
+﻿@using CineBook.Interface
+@{
     ViewData["Title"] = "Home Page";
 }
+@inject ITicketService _ticketService
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+    .carousel-item img {
+        object-fit: cover;
+        height: 500px;
+    }
 
+    .carousel-caption {
+        background-color: rgba(0, 0, 0, 0.7);
+        padding: 20px;
+        border-radius: 10px;
+    }
+</style>
+
+<header>
+    <div id="movieCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            @* Group movies into chunks of 3 *@
+            @{
+                var movies = await _ticketService.GetMovies();
+                var groupedMovies = movies.Select((movie, index) => new { movie, index })
+                .GroupBy(x => x.index / 3)
+                .ToList();
+            }
+
+            @for (int i = 0; i < groupedMovies.Count; i++)
+            {
+                <div class="carousel-item @(i == 0 ? "active" : "")">
+                    <div class="row">
+                        @foreach (var item in groupedMovies[i])
+                        {
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <img src="@item.movie.MovieImage" class="card-img-top" alt="@item.movie.Title">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title">@item.movie.Title</h5>
+                                        <p class="card-text">Release Date: @item.movie.ReleaseDate.ToString("MMMM dd, yyyy")</p>
+                                        <a class="btn btn-primary" asp-action="TicketReservation" asp-controller="Ticket" asp-route-MovieId="@item.movie.Id">Buy Ticket</a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+
+        <button class="carousel-control-prev" type="button" data-bs-target="#movieCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#movieCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+</header>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>

@@ -29,6 +29,7 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 
+builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<DatabaseSeeder>();
