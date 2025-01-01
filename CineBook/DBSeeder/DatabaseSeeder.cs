@@ -43,15 +43,16 @@ public class DatabaseSeeder
                         DateTime releaseDate = DateTime.Parse(releaseDateStr);
 
                         var movieId = movie.GetProperty("id").GetInt32();
-
+                        var posterPath = movie.GetProperty("poster_path").GetString();
+                        var imageUrl = $"https://image.tmdb.org/t/p/w500{posterPath}";
                         // Create new movie object
                         var newMovie = new Movie
                         {
                             Title = title,
                             Genre = genre,
-                            ReleaseDate = releaseDate // Store as DateTime
+                            ReleaseDate = releaseDate, // Store as DateTime
+                            MovieImage = imageUrl // Add the image URL
                         };
-
                         _context.Movies.Add(newMovie);
                         await _context.SaveChangesAsync(); // Save movie to DB
 
