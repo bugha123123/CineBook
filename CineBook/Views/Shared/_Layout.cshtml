@@ -25,9 +25,8 @@
             </label>
 
             <div class="hidden md:flex items-center space-x-6">
-                <a href="#" class="text-black hover:text-accent transition duration-300" style="text-decoration:none;">Now Showing</a>
-                <a href="#" class="text-black hover:text-accent transition duration-300" style="text-decoration:none;">Coming Soon</a>
-                <a href="#" class="text-black hover:text-accent transition duration-300" style="text-decoration:none;">Cinemas</a>
+                <a  class="text-black hover:text-accent transition duration-300" style="text-decoration:none;" asp-action="ComingNow" asp-controller="Ticket">Now Showing</a>
+                <a  class="text-black hover:text-accent transition duration-300" style="text-decoration:none;" asp-action="ComingSoon" asp-controller="Ticket">Coming Soon</a>
                 <a  class="text-black hover:text-accent transition duration-300" style="text-decoration:none;" asp-action="BookingHistory" asp-controller="Ticket">History</a>
                 @if (!User.Identity.IsAuthenticated)
                 {

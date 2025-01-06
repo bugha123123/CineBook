@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CineBook.Migrations
 {
     [DbContext(typeof(AppDbContextion))]
-    [Migration("20250101220944_initial")]
-    partial class initial
+    [Migration("20250106083140_initial3")]
+    partial class initial3
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace CineBook.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("CineBook.Models.Booking", b =>
+            modelBuilder.Entity("Booking", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -36,6 +36,9 @@ namespace CineBook.Migrations
                     b.Property<string>("BookedSeatNumbers")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("bit");
 
                     b.Property<int>("MovieId")
                         .HasColumnType("int");
@@ -79,6 +82,9 @@ namespace CineBook.Migrations
                     b.Property<int>("RunTime")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("ShowTime")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -86,38 +92,6 @@ namespace CineBook.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Movies");
-                });
-
-            modelBuilder.Entity("CineBook.Models.Seat", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("BookingId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsAvailable")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("MovieId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Number")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SeatPrice")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BookingId");
-
-                    b.HasIndex("MovieId");
-
-                    b.ToTable("Seats");
                 });
 
             modelBuilder.Entity("CineBook.Models.User", b =>
@@ -318,7 +292,39 @@ namespace CineBook.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("CineBook.Models.Booking", b =>
+            modelBuilder.Entity("Seat", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("BookingId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsAvailable")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MovieId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Number")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SeatPrice")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookingId");
+
+                    b.HasIndex("MovieId");
+
+                    b.ToTable("Seats");
+                });
+
+            modelBuilder.Entity("Booking", b =>
                 {
                     b.HasOne("CineBook.Models.Movie", "movie")
                         .WithMany()
@@ -327,7 +333,7 @@ namespace CineBook.Migrations
                         .IsRequired();
 
                     b.HasOne("CineBook.Models.User", "user")
-                        .WithMany()
+                        .WithMany("booking")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -335,23 +341,6 @@ namespace CineBook.Migrations
                     b.Navigation("movie");
 
                     b.Navigation("user");
-                });
-
-            modelBuilder.Entity("CineBook.Models.Seat", b =>
-                {
-                    b.HasOne("CineBook.Models.Booking", "Booking")
-                        .WithMany("BookedSeats")
-                        .HasForeignKey("BookingId");
-
-                    b.HasOne("CineBook.Models.Movie", "Movie")
-                        .WithMany("Seats")
-                        .HasForeignKey("MovieId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Booking");
-
-                    b.Navigation("Movie");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -405,7 +394,24 @@ namespace CineBook.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("CineBook.Models.Booking", b =>
+            modelBuilder.Entity("Seat", b =>
+                {
+                    b.HasOne("Booking", "Booking")
+                        .WithMany("BookedSeats")
+                        .HasForeignKey("BookingId");
+
+                    b.HasOne("CineBook.Models.Movie", "Movie")
+                        .WithMany("Seats")
+                        .HasForeignKey("MovieId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Booking");
+
+                    b.Navigation("Movie");
+                });
+
+            modelBuilder.Entity("Booking", b =>
                 {
                     b.Navigation("BookedSeats");
                 });
@@ -413,6 +419,11 @@ namespace CineBook.Migrations
             modelBuilder.Entity("CineBook.Models.Movie", b =>
                 {
                     b.Navigation("Seats");
+                });
+
+            modelBuilder.Entity("CineBook.Models.User", b =>
+                {
+                    b.Navigation("booking");
                 });
 #pragma warning restore 612, 618
         }

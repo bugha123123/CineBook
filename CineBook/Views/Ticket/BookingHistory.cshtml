@@ -4,59 +4,74 @@
     <header class="mb-8">
         <nav class="flex justify-between items-center">
             <h1 class="text-3xl font-bold">Booking History</h1>
-            <a  class="text-blue-500 hover:text-blue-600 transition-colors duration-300" asp-action="Index" asp-controller="">
+            <a class="text-blue-500 hover:text-blue-600 transition-colors duration-300" asp-action="Index" asp-controller="">
                 &larr; Back to Movies
             </a>
         </nav>
     </header>
 
     <main>
-        <div class="bg-white shadow-md rounded-lg overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead>
-                        <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-                            <th class="py-3 px-6 text-left">Movie</th>
-                            <th class="py-3 px-6 text-left">Date</th>
-                            <th class="py-3 px-6 text-left">Time</th>
-                            <th class="py-3 px-6 text-left">Seats</th>
-                            <th class="py-3 px-6 text-left">Total</th>
-                           
-                        </tr>
-                    </thead>
-                    <tbody class="text-gray-600 text-sm font-light">
-                        @foreach (var item in Model)
-                        { 
-                            <tr class="border-b border-gray-200 hover:bg-gray-100">
-                            <td class="py-3 px-6 text-left whitespace-nowrap">
-                                <div class="flex items-center">
-                                    <div class="mr-2">
-                                            <img class="w-8 h-12 object-cover" src="@item.movie.MovieImage" alt="Inception">
-                                    </div>
-                                    <span class="font-medium">@item.movie.Title</span>
-                                </div>
-                            </td>
-                            <td class="py-3 px-6 text-left">@item.movie.ReleaseDate</td>
-                            <td class="py-3 px-6 text-left">@item.movie.RunTime</td>
-
-                                <td class="py-3 px-6 text-left">
-                                    @string.Join(", ", @item.BookedSeatNumbers)
-                                </td>
-
-                                <td class="py-3 px-6 text-left">
-                                    @(@item.BookedSeats.Count() * 10)   
-                                </td>
-
-
-                        </tr>
-                            
-                        }
-                      
-                       
-                    </tbody>
-                </table>
+        @if (Model == null || !Model.Any())
+        {
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                <strong class="font-bold">No Bookings Found!</strong>
+                <span class="block sm:inline">You have not made any bookings yet.</span>
             </div>
-        </div>
-      
+        }
+        else
+        {
+            <div class="bg-white shadow-md rounded-lg overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                                <th class="py-3 px-6 text-left">Movie</th>
+                                <th class="py-3 px-6 text-left">Date</th>
+                                <th class="py-3 px-6 text-left">Time</th>
+                                <th class="py-3 px-6 text-left">Seats</th>
+                                <th class="py-3 px-6 text-left">Total</th>
+                                <th class="py-3 px-6 text-left">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-gray-600 text-sm font-light">
+                            @foreach (var item in Model)
+                            {
+                                <tr class="border-b border-gray-200 hover:bg-gray-100">
+                                    <td class="py-3 px-6 text-left whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="mr-2">
+                                                <img class="w-8 h-12 object-cover" src="@item.movie.MovieImage" alt="Movie Image">
+                                            </div>
+                                            <span class="font-medium">@item.movie.Title</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-3 px-6 text-left">@item.movie.ReleaseDate</td>
+                                    <td class="py-3 px-6 text-left">@item.movie.RunTime</td>
+                                    <td class="py-3 px-6 text-left">
+                                        @string.Join(", ", @item.BookedSeatNumbers)
+                                    </td>
+                                    <td class="py-3 px-6 text-left">
+                                        @(@item.BookedSeats.Count() * 10)
+                                    </td>
+                                    <td class="py-3 px-6 text-left">
+                                        <form asp-action="RemoveBooking" asp-controller="Ticket" method="post">
+                                            <input type="hidden" name="BookingId" value="@item.Id" />
+                                            <button type="submit" class="text-red-500 hover:text-red-600 transition-colors duration-300 flex items-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="h-5 w-5 mr-1" viewBox="0 0 16 16">
+                                                    <path d="M5.5 5.5a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0v-6a.5.5 0 0 1 .5-.5zm2.5.5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0v-6zm2.5-.5a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0v-6a.5.5 0 0 1 .5-.5z" />
+                                                    <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1 0-2h3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1h3a1 1 0 0 1 1 1zM4.118 4l.282 9.004A1 1 0 0 0 5.396 14h5.208a1 1 0 0 0 .996-.996L11.882 4H4.118zM2.5 3a.5.5 0 0 0 0 1H13.5a.5.5 0 0 0 0-1H2.5z" />
+                                                </svg>
+                                       
+                                            </button>
+                                        </form>
+                                    </td>
+
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
     </main>
 </div>

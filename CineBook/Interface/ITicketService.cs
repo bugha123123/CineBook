@@ -14,5 +14,10 @@ namespace CineBook.Interface
        Task<Movie> GetMovieById(int MovieId);
 
         Task<List<Booking>> GetBookingHistoryForUser();
+
+        Task RemoveBooking(int BookingId);
+
+        Task<List<Movie>> GetSoonComingMovies();
+        Task<List<Movie>> GetComingNowMovies();
     }
 }

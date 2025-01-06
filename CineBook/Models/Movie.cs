@@ -11,5 +11,8 @@
         public  int RunTime { get; set; } 
         public DateTime ReleaseDate { get; set; }
         public ICollection<Seat> Seats { get; set; }
+        public DateTime ShowTime { get; set; }
+
+           
     }
 }

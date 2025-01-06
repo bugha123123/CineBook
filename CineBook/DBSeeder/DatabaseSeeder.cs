@@ -1,6 +1,7 @@
 ﻿using CineBook.Models;
 using System.Text.Json;
 using System;
+using System.Linq;
 using CineBook.ApplicationDbContext;
 
 public class DatabaseSeeder
@@ -29,17 +30,16 @@ public class DatabaseSeeder
             {
                 var movieData = await movieResponse.Content.ReadFromJsonAsync<JsonElement>();
 
-                // Check if "results" is present in the response
                 if (movieData.TryGetProperty("results", out var movies))
                 {
-                    // Optionally, fetch genre details (if needed)
+                    // Fetch genre details
                     var genreResponse = await client.GetAsync("https://api.themoviedb.org/3/genre/movie/list?api_key=" + _apiKey + "&language=en-US");
                     var genreData = await genreResponse.Content.ReadFromJsonAsync<JsonElement>();
                     var genres = genreData.GetProperty("genres").EnumerateArray().ToDictionary(g => g.GetProperty("id").GetInt32(), g => g.GetProperty("name").GetString());
 
                     var movieList = new List<Movie>();
                     var seatList = new List<Seat>();
-
+                    Random random = new Random();
                     foreach (var movie in movies.EnumerateArray())
                     {
                         var title = movie.GetProperty("title").GetString();
@@ -55,25 +55,29 @@ public class DatabaseSeeder
                         var posterPath = movie.GetProperty("poster_path").GetString();
                         var imageUrl = $"https://image.tmdb.org/t/p/w500{posterPath}";
 
-                        // Fetch detailed movie information (description, runtime, etc.)
+                        // Fetch detailed movie information
                         var movieDetailsResponse = await client.GetAsync($"https://api.themoviedb.org/3/movie/{movieId}?api_key={_apiKey}&language=en-US");
 
                         if (movieDetailsResponse.IsSuccessStatusCode)
                         {
                             var movieDetailsData = await movieDetailsResponse.Content.ReadFromJsonAsync<JsonElement>();
-
                             var description = movieDetailsData.GetProperty("overview").GetString();
                             var runtime = movieDetailsData.GetProperty("runtime").GetInt32(); // Runtime in minutes
+
+                            // Generate ShowTime as any date in the future from DateTime.Now
+                            int randomDaysFromNow = random.Next(1, 90); // Random number between 1 and 30 days
+                            DateTime showTime = DateTime.Now.AddDays(randomDaysFromNow);
 
                             // Create new movie object
                             var newMovie = new Movie
                             {
                                 Title = title,
                                 Genre = genre,
-                                ReleaseDate = releaseDate, // Store as DateTime
-                                MovieImage = imageUrl, // Add the image URL
-                                Description = description, // Add the description
-                                RunTime = runtime // Add the runtime (in minutes)
+                                ReleaseDate = releaseDate,
+                                MovieImage = imageUrl,
+                                Description = description,
+                                RunTime = runtime,
+                                ShowTime = showTime
                             };
 
                             movieList.Add(newMovie);

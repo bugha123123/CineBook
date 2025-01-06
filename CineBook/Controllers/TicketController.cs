@@ -29,6 +29,16 @@ namespace CineBook.Controllers
         {
             return View();
         }
+        public async Task<IActionResult> ComingSoon()
+        {
+            var result = await ticketService.GetSoonComingMovies();
+            return View(result);
+        }
+        public async Task<IActionResult> ComingNow()
+        {
+            var result = await ticketService.GetComingNowMovies();
+            return View(result);
+        }
         [HttpPost]
         public async Task<IActionResult> BookTicket([FromBody] List<int> seatIds)
         {
@@ -38,13 +48,26 @@ namespace CineBook.Controllers
                     return BadRequest("No seats selected.");
 
                 await ticketService.BookTicket(seatIds);
-                return Ok(); // Return success
+                return Ok(); 
             }
             catch (Exception ex)
             {
-                // Log the exception and return a 500 error
              
                 return StatusCode(500, "Internal server error. Please try again.");
+            }
+        }
+
+        public async Task<IActionResult> RemoveBooking(int BookingId)
+        {
+            try
+            {
+            await ticketService.RemoveBooking(BookingId);
+                return RedirectToAction("BookingHistory", "Ticket");
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode(500, $"Internal server error. Please try again.{ex}");
             }
         }
     }

@@ -48,9 +48,10 @@ namespace CineBook.Services
                 MovieId = seats.First().MovieId,
                 movie = seats.First().Movie,
                 user = loggedInUser,
-                BookedSeatNumbers = seatIds
+                BookedSeatNumbers = seatIds,
+                IsCompleted = true
                
-
+               
                
             };
 
@@ -158,6 +159,22 @@ namespace CineBook.Services
             return BookingHistory;
         }
 
+        public async Task<List<Movie>> GetComingNowMovies()
+        {
+            var currentDateTime = DateTime.Now;
+
+            // Define a time window (e.g., movies starting in the next 30 minutes or already started)
+            var windowStartTime = currentDateTime.AddMinutes(-30); // 30 minutes before now
+            var windowEndTime = currentDateTime.AddMinutes(30); // 30 minutes after now
+
+            // Fetch movies where ShowTime is within the time window
+            var nowMovies = await _dbcontext.Movies
+                .Where(movie => movie.ShowTime >= windowStartTime && movie.ShowTime <= windowEndTime)
+                .ToListAsync();
+
+            return nowMovies;
+        }
+
         public async Task<Movie> GetMovieById(int MovieId)
         {
             return await _dbcontext.Movies.Include(x => x.Seats).FirstOrDefaultAsync(x => x.Id == MovieId);
@@ -172,5 +189,42 @@ namespace CineBook.Services
         {
             return await _dbcontext.Seats.Where(x => x.MovieId == MovieId).ToListAsync();
         }
+
+        public async Task<List<Movie>> GetSoonComingMovies()
+        {
+            var currentDate = DateTime.Now;
+
+           
+            var upcomingMovies = await _dbcontext.Movies
+                .Where(movie => movie.ShowTime > currentDate && movie.ShowTime <= currentDate.AddDays(30)) // Filter for upcoming movies within 30 days
+                .ToListAsync();
+
+            return upcomingMovies;
+        }
+
+        public async Task RemoveBooking(int BookingId)
+        {
+            var BookingToRemove = await _dbcontext.Bookings
+                                                  .Include(x => x.BookedSeats)  
+                                                  .FirstOrDefaultAsync(x => x.Id == BookingId);
+
+            if (BookingToRemove == null)
+            {
+                return; 
+            }
+
+            // Flag each booked seat as unavailable
+            foreach (var seat in BookingToRemove.BookedSeats)
+            {
+                seat.IsAvailable = true;
+                seat.Booking.IsCompleted = false;
+            }
+
+            // Remove the booking from the database
+            _dbcontext.Bookings.Remove(BookingToRemove);
+
+            await _dbcontext.SaveChangesAsync();
+        }
+
     }
 }

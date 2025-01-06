@@ -1,3 +1,4 @@
+using CineBook;
 using CineBook.ApplicationDbContext;
 using CineBook.Interface;
 using CineBook.Models;
@@ -33,6 +34,9 @@ builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<DatabaseSeeder>();
+
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
