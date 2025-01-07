@@ -19,5 +19,7 @@ public class Booking
 
     public bool IsCompleted { get; set; }
 
+    public DateTime BookedAt { get; set; }
+
 
 }

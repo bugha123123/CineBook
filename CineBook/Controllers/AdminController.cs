@@ -27,6 +27,11 @@ namespace CineBook.Controllers
             return View(TotalBookings);
         }
 
+        public async Task<IActionResult> GenerateReport()
+        {
+
+            return View();
+        }
         public async Task<IActionResult> AddNewAdmin(string UserName, string Gmail, string Role)
         {
             await _adminService.AddNewAdmin(UserName, Gmail, Role);

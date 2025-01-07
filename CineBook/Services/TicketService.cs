@@ -49,7 +49,8 @@ namespace CineBook.Services
                 movie = seats.First().Movie,
                 user = loggedInUser,
                 BookedSeatNumbers = seatIds,
-                IsCompleted = true
+                IsCompleted = true,
+                BookedAt = DateTime.Now
                
               
                
