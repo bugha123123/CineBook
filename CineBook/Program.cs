@@ -11,14 +11,14 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-
-
+// Configure the database context
 builder.Services.AddDbContext<AppDbContextion>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("CineBookConnectionString")));
 
+// Configure Identity
 builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
-    // Set desired options
+    // Set password options
     options.Password.RequiredLength = 1;
     options.Password.RequireUppercase = false;
     options.Password.RequireLowercase = false;
@@ -28,58 +28,33 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
 .AddEntityFrameworkStores<AppDbContextion>()
 .AddDefaultTokenProviders();
 
+// Add services to the container
 builder.Services.AddScoped<IAuthService, AuthService>();
-
 builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<DatabaseSeeder>();
 
-
-
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
-app.MapGet("/", (HttpContext context) =>
-{
-    // Check if the user is authenticated
-    if (!context.User.Identity.IsAuthenticated)
-    {
-        // Redirect unauthenticated users to the login page
-        context.Response.Redirect("/Auth/signin");
-        return Task.CompletedTask;
-    }
-
-    else if (context.User.Identity.IsAuthenticated)
-    {
-        if (context.Request.Path.StartsWithSegments("/Auth/signin") || context.Request.Path.StartsWithSegments("/Auth/signup"))
-        {
-            context.Response.Redirect("/Home/Index");
-            return Task.CompletedTask;
-        }
-
-        context.Response.Redirect("/Home/Index");
-        return Task.CompletedTask;
-    }
-
-    context.Response.Redirect("/Home/Index");
-    return Task.CompletedTask;
-});
-
+// Seed roles on startup
 using (var scope = app.Services.CreateScope())
 {
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    await RoleSeeder.SeedRolesAsync(scope.ServiceProvider, roleManager);
+
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContextion>();
     var seeder = scope.ServiceProvider.GetRequiredService<DatabaseSeeder>();
-    await seeder.SeedDataAsync(); // Seed data into the database
+    await seeder.SeedDataAsync();
 }
-
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();

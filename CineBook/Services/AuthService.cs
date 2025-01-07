@@ -56,6 +56,7 @@ namespace CineBook.Services
             var result = await _userManager.CreateAsync(user, registerViewModel.Password);
             if (result.Succeeded)
             {
+                await _userManager.AddToRoleAsync(user, "USER");
                 await _signInManager.SignInAsync(user, isPersistent: false);
                 await SendWelcomeEmailToUser(registerViewModel.Email);
 

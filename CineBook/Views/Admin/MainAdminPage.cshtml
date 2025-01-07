@@ -1,0 +1,290 @@
+﻿@using CineBook.Interface
+@inject IAdminService _AdminService;
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Ticket Booking System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script>
+            function showSection(section) {
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(sec => {
+                sec.style.display = 'none';
+            });
+            document.getElementById(section).style.display = 'block';
+        }
+
+    </script>
+</head>
+
+<body class="bg-gray-100">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-gray-800 text-white p-4">
+            <h1 class="text-2xl font-bold mb-8">Admin Dashboard</h1>
+            <nav>
+                <ul>
+                    <li class="mb-4">
+                        <a href="javascript:void(0);" onclick="showSection('dashboard')" class="flex items-center text-gray-300 hover:text-white">
+                            <i class="fas fa-tachometer-alt mr-3"></i>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="mb-4">
+                        <a href="javascript:void(0);" onclick="showSection('userManagement')" class="flex items-center text-gray-300 hover:text-white">
+                            <i class="fas fa-users mr-3"></i>
+                            User Management
+                        </a>
+                    </li>
+                    <li class="mb-4">
+                        <a href="javascript:void(0);" onclick="showSection('eventManagement')" class="flex items-center text-gray-300 hover:text-white">
+                            <i class="fas fa-calendar-alt mr-3"></i>
+                            Event Management
+                        </a>
+                    </li>
+                    <li class="mb-4">
+                        <a href="javascript:void(0);" onclick="showSection('ticketManagement')" class="flex items-center text-gray-300 hover:text-white">
+                            <i class="fas fa-ticket-alt mr-3"></i>
+                            Ticket Management
+                        </a>
+                    </li>
+                    <li class="mb-4">
+                        <a href="javascript:void(0);" onclick="showSection('reviews')" class="flex items-center text-gray-300 hover:text-white">
+                            <i class="fas fa-star mr-3"></i>
+                            Reviews and Feedback
+                        </a>
+                    </li>
+                    <li class="mb-4">
+                        <a href="javascript:void(0);" onclick="showSection('revenueManagement')" class="flex items-center text-gray-300 hover:text-white">
+                            <i class="fas fa-chart-line mr-3"></i>
+                            Revenue Management
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-8 overflow-y-auto">
+            <!-- Dashboard Section -->
+            <div id="dashboard" class="section">
+                <h2 class="text-3xl font-semibold mb-6">Dashboard Overview</h2>
+
+                <!-- Key Metrics -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-xl font-semibold mb-2">Total Tickets Sold</h3>
+                        <p class="text-3xl font-bold text-blue-600">@(await _AdminService.GetTotalTicketsSold())</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-xl font-semibold mb-2">Total Revenue</h3>
+                        <p class="text-3xl font-bold text-green-600">@(await _AdminService.GetTotalRevenue())</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-xl font-semibold mb-2">Upcoming Events</h3>
+                        <p class="text-3xl font-bold text-purple-600">12</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-xl font-semibold mb-2">Total Users</h3>
+                        <p class="text-3xl font-bold text-orange-600">
+                            @{
+                                var TotalUsers = await _AdminService.GetTotalUsers();
+                                var UserCount = TotalUsers.Count();
+                            }@UserCount
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Management Section -->
+            <div id="userManagement" class="section" style="display: none;">
+                <div class="mb-4 bg-yellow-100 text-yellow-800 p-3 rounded-lg">
+                    <strong>Note:</strong> Please be careful that the username is the email address of the user.
+                </div>
+                <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+                    <h2 class="text-xl font-semibold mb-4">Add New User</h2>
+                    <form asp-action="AddNewAdmin" asp-controller="Admin" method="post">
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
+                                Username
+                            </label>
+                            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" name="UserName" type="text" placeholder="Username" required />
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
+                                Email
+                            </label>
+                            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" name="Gmail" type="email" placeholder="Email" required />
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="role">
+                                Role
+                            </label>
+                            <select class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="role" name="Role" required>
+                                <option value="User">User</option>
+                                <option value="Admin">Admin</option>
+                                
+                            </select>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+                                Add User
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+
+                <!-- User List -->
+                <div class="bg-white shadow-md rounded px-8 pt-6 pb-8">
+                    <h2 class="text-xl font-semibold mb-4">User List</h2>
+                    <table class="min-w-full">
+                        <thead>
+                            <tr>
+                                <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    Username
+                                </th>
+                                <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    Email
+                                </th>
+                                <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    Role
+                                </th>
+                                <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in TotalUsers)
+                            {
+                                  <tr>
+                                <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
+                                        @item.Email
+                                </td>
+                                <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
+                                  @item.Email
+                                </td>
+                                <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
+                                    {Role}
+                                </td>
+                                <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
+                                    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded mr-2">Edit</button>
+                                    <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">Delete</button>
+                                </td>
+                            </tr>
+                            }
+                          
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+      
+
+            <!-- Event Management Section -->
+            <div id="eventManagement" class="section" style="display:none;" >
+
+        <h1 class="text-3xl font-bold mb-6">Event Management</h1>
+
+        <!-- Add Event Form -->
+        <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+            <h2 class="text-xl font-semibold mb-4">Add New Event</h2>
+            <form>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="event-name">
+                        Event Name
+                    </label>
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="event-name" type="text" placeholder="Event Name">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="event-date">
+                        Date
+                    </label>
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="event-date" type="date">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="event-location">
+                        Location
+                    </label>
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="event-location" type="text" placeholder="Event Location">
+                </div>
+                <div class="flex items-center justify-between">
+                    <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
+                        Add Event
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Event List -->
+        <div class="bg-white shadow-md rounded px-8 pt-6 pb-8">
+            <h2 class="text-xl font-semibold mb-4">Event List</h2>
+            <table class="min-w-full">
+                <thead>
+                    <tr>
+                        <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            Event Name
+                        </th>
+                        <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            Date
+                        </th>
+                        <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            Location
+                        </th>
+                        <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            Actions
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
+                            Annual Conference
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
+                            2025-06-15
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
+                            Convention Center
+                        </td>
+                        <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
+                            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded mr-2">Edit</button>
+                            <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">Cancel</button>
+                        </td>
+                    </tr>
+                    <!-- Add more event rows here -->
+                </tbody>
+            </table>
+        </div>
+          
+  
+           
+
+            <!-- Ticket Management Section -->
+            <div id="ticketManagement" class="section" style="display: none;">
+                <h3>Ticket Management Section</h3>
+                <!-- Your content here -->
+            </div>
+
+            <!-- Reviews Section -->
+            <div id="reviews" class="section" style="display: none;">
+                <h3>Reviews and Feedback Section</h3>
+                <!-- Your content here -->
+            </div>
+
+            <!-- Revenue Management Section -->
+            <div id="revenueManagement" class="section" style="display: none;">
+                <h3>Revenue Management Section</h3>
+                <!-- Your content here -->
+            </div>
+
+        </main>
+    </div>
+</body>
+
+</html>

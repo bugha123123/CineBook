@@ -28,9 +28,10 @@
                 <a  class="text-black hover:text-accent transition duration-300" style="text-decoration:none;" asp-action="ComingNow" asp-controller="Ticket">Now Showing</a>
                 <a  class="text-black hover:text-accent transition duration-300" style="text-decoration:none;" asp-action="ComingSoon" asp-controller="Ticket">Coming Soon</a>
                 <a  class="text-black hover:text-accent transition duration-300" style="text-decoration:none;" asp-action="BookingHistory" asp-controller="Ticket">History</a>
+                <a class="text-black hover:text-accent transition duration-300" style="text-decoration:none;" asp-action="MainAdminPage" asp-controller="Admin">Admin Dashboard</a>
                 @if (!User.Identity.IsAuthenticated)
                 {
-                    <a class="bg-primary text-white px-6 py-2 rounded-full hover:bg-secondary transition duration-300" asp-action="signin" asp-controller="Auth">Log in</a>
+                    <a class="bg-primary text-white px-6 py-2 rounded-full hover:bg-secondary transition duration-300" asp-action="signin" style="text-decoration:none;" asp-controller="Auth">Log in</a>
                 } else {
                     <form asp-action="SignoutUser" asp-controller="Auth" method="post">
                         <button class="bg-blue-500 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition duration-300" type="submit">
