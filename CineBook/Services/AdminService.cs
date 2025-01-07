@@ -119,5 +119,11 @@ namespace CineBook.Services
             var TotalMovies = await _DBContext.Movies.AsNoTracking().ToListAsync();
             return TotalMovies;
         }
+
+        public async Task<List<Booking>> GetAllBookings()
+        {
+            var TotalBookings = await _DBContext.Bookings.Include(x => x.movie).ToListAsync();
+            return TotalBookings;
+        }
     }
 }

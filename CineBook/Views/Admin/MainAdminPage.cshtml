@@ -22,18 +22,7 @@
 
     </script>
 
-    <style>
-        .tooltip {
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 5px;
-            border-radius: 5px;
-            font-size: 12px;
-            position: absolute;
-            transform: translateX(-50%);
-            pointer-events: none; /* Prevent interaction with the tooltip */
-        }
-    </style>
+
 </head>
 
 <body>
@@ -247,7 +236,7 @@
                     <h2 class="text-2xl font-bold mb-4">Admin Actions</h2>
                     <div class="flex space-x-4">
 
-                        <button class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Manage Bookings</button>
+                        <button class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"><a asp-action="ManageBookings" asp-controller="Admin" style="text-decoration:none">Manage Bookings</a></button>
                         <button class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Generate Report</button>
                     </div>
                 </section>
@@ -303,8 +292,59 @@
 </html>
 
 <script>
-      
 
+           document.addEventListener("DOMContentLoaded", function() {
+        const movieSelect = document.getElementById("movieId");
+
+        // Add the change event listener to the movie select dropdown
+        movieSelect.addEventListener("change", function() {
+            const movieId = movieSelect.value;  // Get the selected movieId
+            console.log("Selected movieId:", movieId);  // Log the selected movieId
+
+            // Call the fetchSeats function with the selected movieId
+            fetchSeats(movieId);
+        });
+    });
+
+    function fetchSeats(movieId) {
+        // Ensure a valid movie is selected (value is not 0)
+        if (movieId == "0") {
+            document.getElementById("seats-container").innerHTML = "<p class='text-center text-lg'>Please select a movie to view seats.</p>";
+            return;
+        }
+
+        console.log("Fetching seats for movieId:", movieId);  // Log the movieId for the API request
+
+        // Fetch seats using the movieId
+        fetch(`/Admin/SearchSeats?movieId=${movieId}`)
+            .then(response => {
+                console.log("Response received:", response);  // Log the response
+                return response.json();
+            })
+            .then(data => {
+                console.log("Seats data received:", data);  // Log the seats data
+
+                const seatsContainer = document.getElementById("seats-container");
+                seatsContainer.innerHTML = ""; // Clear previous seats
+
+                if (data && data.length > 0) {
+                    data.forEach(seat => {
+                        const seatElement = document.createElement("div");
+                        seatElement.id = `seat-${seat.id}`;
+                        seatElement.className = `w-12 h-12 m-1 rounded-t-lg ${seat.isAvailable ? "bg-green-500" : "bg-red-500"} flex items-center justify-center text-white font-bold cursor-pointer`;
+                        seatElement.title = seat.number;
+                        seatElement.innerText = seat.number;
+                        seatsContainer.appendChild(seatElement);
+                    });
+                } else {
+                    seatsContainer.innerHTML = "<p class='text-center text-lg'>No seats available.</p>";
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching seats:', error);
+                document.getElementById("seats-container").innerHTML = "<p class='text-center text-lg'>Error loading seats.</p>";
+            });
+    }
 </script>
 
 

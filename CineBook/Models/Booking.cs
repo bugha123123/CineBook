@@ -18,4 +18,6 @@ public class Booking
     public List<int> BookedSeatNumbers { get; set; }
 
     public bool IsCompleted { get; set; }
+
+
 }

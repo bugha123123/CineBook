@@ -10,7 +10,7 @@ public class Seat
 
     public int SeatPrice { get; set; } = 10;
 
-    
+
 
 
 }
