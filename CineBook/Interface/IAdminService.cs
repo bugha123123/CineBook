@@ -12,5 +12,8 @@ namespace CineBook.Interface
 
         Task DeleteUserAsync(string userId);
         Task AddNewAdmin(string UserName, string Gmail, string Role);
+
+        Task<List<Seat>> SearchSeatsByMovies(int MovieId);
+        Task<List<Movie>> GetAllMovies();
     }
 }

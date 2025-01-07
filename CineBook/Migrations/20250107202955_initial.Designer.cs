@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CineBook.Migrations
 {
     [DbContext(typeof(AppDbContextion))]
-    [Migration("20250106083140_initial3")]
-    partial class initial3
+    [Migration("20250107202955_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -396,7 +396,7 @@ namespace CineBook.Migrations
 
             modelBuilder.Entity("Seat", b =>
                 {
-                    b.HasOne("Booking", "Booking")
+                    b.HasOne("Booking", null)
                         .WithMany("BookedSeats")
                         .HasForeignKey("BookingId");
 
@@ -405,8 +405,6 @@ namespace CineBook.Migrations
                         .HasForeignKey("MovieId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Booking");
 
                     b.Navigation("Movie");
                 });

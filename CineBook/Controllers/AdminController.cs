@@ -1,4 +1,5 @@
 ﻿using CineBook.Interface;
+using CineBook.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CineBook.Controllers
@@ -12,8 +13,11 @@ namespace CineBook.Controllers
             _adminService = adminService;
         }
 
-        public IActionResult MainAdminPage()
+        public async Task<IActionResult> MainAdminPage()
         {
+            var movies = await _adminService.GetAllMovies();
+            ViewData["Movies"] = movies; 
+
             return View();
         }
 
@@ -22,5 +26,15 @@ namespace CineBook.Controllers
             await _adminService.AddNewAdmin(UserName, Gmail, Role);
             return RedirectToAction("MainAdminPage", "Admin");
         }
+
+        public async Task<IActionResult> SearchSeats(int movieId)
+        {
+            var seats = await _adminService.SearchSeatsByMovies(movieId);  // Use your service to fetch the seats
+            return Json(seats);  // Return seats as JSON
+        }
+
+
+
+
     }
 }

@@ -96,5 +96,28 @@ namespace CineBook.Services
       
         }
 
+        public async Task<List<Seat>> SearchSeatsByMovies(int MovieId)
+        {
+            if (MovieId == null)
+            {
+                return new List<Seat>(); 
+            }
+
+          
+               
+                var seats = await _DBContext.Seats
+                    .Where(s => s.MovieId == MovieId)
+                    .ToListAsync();
+
+                return seats;
+          
+        }
+
+
+        public async Task<List<Movie>> GetAllMovies()
+        {
+            var TotalMovies = await _DBContext.Movies.AsNoTracking().ToListAsync();
+            return TotalMovies;
+        }
     }
 }

@@ -393,7 +393,7 @@ namespace CineBook.Migrations
 
             modelBuilder.Entity("Seat", b =>
                 {
-                    b.HasOne("Booking", "Booking")
+                    b.HasOne("Booking", null)
                         .WithMany("BookedSeats")
                         .HasForeignKey("BookingId");
 
@@ -402,8 +402,6 @@ namespace CineBook.Migrations
                         .HasForeignKey("MovieId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Booking");
 
                     b.Navigation("Movie");
                 });

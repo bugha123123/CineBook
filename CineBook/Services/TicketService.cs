@@ -217,7 +217,7 @@ namespace CineBook.Services
             foreach (var seat in BookingToRemove.BookedSeats)
             {
                 seat.IsAvailable = true;
-                seat.Booking.IsCompleted = false;
+                
             }
 
             // Remove the booking from the database

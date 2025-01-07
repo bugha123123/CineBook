@@ -183,7 +183,8 @@ namespace CineBook.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     MovieId = table.Column<int>(type: "int", nullable: false),
-                    BookedSeatNumbers = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    BookedSeatNumbers = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsCompleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
