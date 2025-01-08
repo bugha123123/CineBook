@@ -8,6 +8,8 @@
         public string MovieImage { get; set; }
         public string Description { get; set; }
 
+
+        public  Double Rating { get; set; }
         public  int RunTime { get; set; } 
         public DateTime ReleaseDate { get; set; }
         public ICollection<Seat> Seats { get; set; }

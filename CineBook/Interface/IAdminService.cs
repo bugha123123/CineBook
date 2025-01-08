@@ -1,4 +1,5 @@
-﻿using CineBook.Models;
+﻿using CineBook.DTO;
+using CineBook.Models;
 
 namespace CineBook.Interface
 {
@@ -17,5 +18,11 @@ namespace CineBook.Interface
         Task<List<Movie>> GetAllMovies();
 
         Task<List<Booking>> GetAllBookings();
+
+        Task<SalesReport> GenerateSalesReport(int lastNDays);
+
+        Task RemoveBooking(int BookingId);
+
+        Task<Booking> GetBookingById(int BookingId);
     }
 }

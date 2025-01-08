@@ -27,10 +27,16 @@ namespace CineBook.Controllers
             return View(TotalBookings);
         }
 
-        public async Task<IActionResult> GenerateReport()
+        public async Task<IActionResult> GenerateReport(int? dateRange)
         {
 
-            return View();
+            int lastNDays = dateRange ?? 30; 
+
+           
+        
+           
+            var salesReport = await _adminService.GenerateSalesReport(lastNDays);
+            return View(salesReport);
         }
         public async Task<IActionResult> AddNewAdmin(string UserName, string Gmail, string Role)
         {
@@ -46,6 +52,14 @@ namespace CineBook.Controllers
 
 
 
-
+        public async Task<IActionResult> RemoveBooking(int BookingId)
+        {
+            if (ModelState.IsValid)
+            {
+                await _adminService.RemoveBooking(BookingId);
+                return RedirectToAction("ManageBookings","Admin" );
+            }
+            return RedirectToAction("ManageBookings", "Admin");
+        }
     }
 }

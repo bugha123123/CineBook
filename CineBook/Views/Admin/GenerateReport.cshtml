@@ -1,15 +1,18 @@
-﻿<div class="container mx-auto px-4 py-8">
+﻿@using CineBook.DTO
+@using CineBook.Interface
+@inject IAdminService _AdminService;
+@model SalesReport;
+<div class="container mx-auto px-4 py-8">
     <h1 class="text-3xl font-bold mb-6">Generate Report</h1>
 
     <div class="bg-white shadow-md rounded-lg p-6 mb-6">
-        <form>
+        <form asp-action="GenerateReport" asp-controller="Admin" method="get">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
                     <label for="report-type" class="block text-sm font-medium text-gray-700 mb-2">Report Type</label>
                     <select id="report-type" name="report-type" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
                         <option value="sales">Sales Report</option>
-                        <option value="bookings">Bookings Report</option>
-                        <option value="events">Events Report</option>
+                        
                         <option value="users">User Activity Report</option>
                     </select>
                 </div>
@@ -36,51 +39,55 @@
             </div>
 
             <div class="flex justify-end">
-                <button type="submit" class="bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                <button type="button" id="generate-report" class="bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                     Generate Report
                 </button>
             </div>
         </form>
     </div>
 
-    <div class="bg-white shadow-md rounded-lg overflow-hidden">
-        <div class="p-6">
-            <h2 class="text-xl font-semibold mb-4">Sales Report (Last 30 Days)</h2>
-            <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Sales</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Number of Bookings</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Average Ticket Price</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap">2023-06-01</td>
-                            <td class="px-6 py-4 whitespace-nowrap">$5,230.00</td>
-                            <td class="px-6 py-4 whitespace-nowrap">127</td>
-                            <td class="px-6 py-4 whitespace-nowrap">$41.18</td>
-                        </tr>
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap">2023-06-02</td>
-                            <td class="px-6 py-4 whitespace-nowrap">$4,890.00</td>
-                            <td class="px-6 py-4 whitespace-nowrap">118</td>
-                            <td class="px-6 py-4 whitespace-nowrap">$41.44</td>
-                        </tr>
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap">2023-06-03</td>
-                            <td class="px-6 py-4 whitespace-nowrap">$6,120.00</td>
-                            <td class="px-6 py-4 whitespace-nowrap">145</td>
-                            <td class="px-6 py-4 whitespace-nowrap">$42.21</td>
-                        </tr>
-                    </tbody>
-                </table>
+
+
+    <div id="report-sections">
+        <!-- Sales Report Section -->
+        <div id="sales-report" class="hidden bg-white shadow-md rounded-lg overflow-hidden">
+            <div class="bg-white shadow-md rounded-lg overflow-hidden">
+                <div class="p-6">
+                    <h2 class="text-xl font-semibold mb-4">Sales Report (Last 30 Days)</h2>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Sales</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Number of Bookings</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@Model.DateRange</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$@Model.TotalRevenue</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@Model.TotalBookedSeats</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-6 py-4">
+                    <button class="text-indigo-600 hover:text-indigo-900"><a asp-action="MainAdminPage" asp-controller="Admin" style=" text-decoration:none;">Go back</a></button>
+                </div>
             </div>
         </div>
-        <div class="bg-gray-50 px-6 py-4">
-            <button class="text-indigo-600 hover:text-indigo-900">Download Full Report (CSV)</button>
+        </div>
+
+     
+
+        <!-- User Activity Report Section -->
+        <div id="users-report" class="hidden bg-white shadow-md rounded-lg overflow-hidden">
+            <div class="p-6">
+                <h2 class="text-xl font-semibold mb-4">User Activity Report</h2>
+                <p>Details about user activity reports...</p>
+            </div>
         </div>
     </div>
 </div>
@@ -92,6 +99,20 @@
             customDateRange.classList.remove('hidden');
         } else {
             customDateRange.classList.add('hidden');
+        }
+    });
+
+    document.getElementById('generate-report').addEventListener('click', function() {
+        // Hide all report sections
+        document.querySelectorAll('#report-sections > div').forEach(section => {
+            section.classList.add('hidden');
+        });
+
+        // Show the selected report section
+        var reportType = document.getElementById('report-type').value;
+        var selectedReport = document.getElementById(reportType + '-report');
+        if (selectedReport) {
+            selectedReport.classList.remove('hidden');
         }
     });
 </script>

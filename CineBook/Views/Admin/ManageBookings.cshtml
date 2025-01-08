@@ -8,26 +8,41 @@
             <thead class="bg-gray-200">
                 <tr>
                     <th class="px-4 py-2 text-left">Booking ID</th>
-                    <th class="px-4 py-2 text-left">Event</th>
-                   
+                    <th class="px-4 py-2 text-left">Movie</th>
+                    <th class="px-4 py-2 text-left">Booked By</th>
+                    <th class="px-4 py-2 text-left">Booked Seats</th>
                     <th class="px-4 py-2 text-left">IsCompleted</th>
                     <th class="px-4 py-2 text-left">Actions</th>
                 </tr>
             </thead>
-            <tbody>
-               @foreach (var item in Model)
+            <tbody class="bg-white divide-y divide-gray-200">
+                @foreach (var item in Model)
                 {
-                    <tr>
+                     <form asp-action="RemoveBooking" asp-controller="Admin" method="post">
+                         <input value="@item.Id" name="BookingId" hidden />
+                        <tr>
                         <td class="px-4 py-2">@item.Id</td>
                         <td class="px-4 py-2">@item.movie.Title</td>
-                        <td class="px-4 py-2"><span class="bg-green-200 text-green-800 py-1 px-2 rounded-full text-sm">@item.IsCompleted</span></td>
+                        <td class="px-4 py-2">@item.user.UserName</td>
+
+                       
                         <td class="px-4 py-2">
-                            <button class="bg-blue-500 hover:bg-blue-600 text-white py-1 px-2 rounded mr-2">View</button>
-                            <button class="bg-red-500 hover:bg-red-600 text-white py-1 px-2 rounded">Cancel</button>
+                            [@string.Join(", ", item.BookedSeatNumbers)]
+                        </td>
+
+                        <td class="px-4 py-2">
+                            <span class="bg-green-200 text-green-800 py-1 px-2 rounded-full text-sm">@item.IsCompleted</span>
+                        </td>
+
+                        <td class="px-4 py-2">
+                            <button  class="bg-blue-500 hover:bg-blue-600 text-white py-1 px-2 rounded mr-2">View</button>
+                            <button type="submit" class="bg-red-500 hover:bg-red-600 text-white py-1 px-2 rounded">Cancel</button>
                         </td>
                     </tr>
+                     </form>
                 }
             </tbody>
+
         </table>
     </div>
 </div>

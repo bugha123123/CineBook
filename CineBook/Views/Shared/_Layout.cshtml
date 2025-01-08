@@ -28,7 +28,10 @@
                 <a  class="text-black hover:text-accent transition duration-300" style="text-decoration:none;" asp-action="ComingNow" asp-controller="Ticket">Now Showing</a>
                 <a  class="text-black hover:text-accent transition duration-300" style="text-decoration:none;" asp-action="ComingSoon" asp-controller="Ticket">Coming Soon</a>
                 <a  class="text-black hover:text-accent transition duration-300" style="text-decoration:none;" asp-action="BookingHistory" asp-controller="Ticket">History</a>
+                @if (User.IsInRole("Admin"))
+                {
                 <a class="text-black hover:text-accent transition duration-300" style="text-decoration:none;" asp-action="MainAdminPage" asp-controller="Admin">Admin Dashboard</a>
+                }
                 @if (!User.Identity.IsAuthenticated)
                 {
                     <a class="bg-primary text-white px-6 py-2 rounded-full hover:bg-secondary transition duration-300" asp-action="signin" style="text-decoration:none;" asp-controller="Auth">Log in</a>

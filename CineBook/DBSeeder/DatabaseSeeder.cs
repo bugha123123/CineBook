@@ -63,6 +63,7 @@ public class DatabaseSeeder
                             var movieDetailsData = await movieDetailsResponse.Content.ReadFromJsonAsync<JsonElement>();
                             var description = movieDetailsData.GetProperty("overview").GetString();
                             var runtime = movieDetailsData.GetProperty("runtime").GetInt32(); // Runtime in minutes
+                            var rating = movieDetailsData.GetProperty("vote_average").GetDouble(); // Rating
 
                             // Generate ShowTime as any date in the future from DateTime.Now
                             int randomDaysFromNow = random.Next(1, 90); // Random number between 1 and 30 days
@@ -77,7 +78,8 @@ public class DatabaseSeeder
                                 MovieImage = imageUrl,
                                 Description = description,
                                 RunTime = runtime,
-                                ShowTime = showTime
+                                ShowTime = showTime,
+                                Rating = rating 
                             };
 
                             movieList.Add(newMovie);
@@ -105,4 +107,6 @@ public class DatabaseSeeder
             }
         }
     }
+
 }
+

@@ -1,19 +1,21 @@
 ﻿@using CineBook.Interface
+@inject ITicketService _TicketService;
 @{
     ViewData["Title"] = "Home Page";
+    var popularMovies = await _TicketService.GetPopularMovies();
 }
 @inject ITicketService _ticketService
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
     .carousel-item img {
-        object-fit: cover;
-        height: 500px;
+    object-fit: cover;
+    height: 500px;
     }
 
     .carousel-caption {
-        background-color: rgba(0, 0, 0, 0.7);
-        padding: 20px;
-        border-radius: 10px;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 20px;
+    border-radius: 10px;
     }
 </style>
 
@@ -42,7 +44,12 @@
                                     <div class="card-body text-center">
                                         <h5 class="card-title">@item.movie.Title</h5>
                                         <p class="card-text">Release Date: @item.movie.ReleaseDate.ToString("MMMM dd, yyyy")</p>
-                                        <a class="btn btn-primary" asp-action="Seats" asp-controller="Ticket" asp-route-MovieId="@item.movie.Id">Choose seats</a>
+                                        @if (User.Identity.IsAuthenticated)
+                                        {
+                                            <a class="btn btn-primary" asp-action="Seats" asp-controller="Ticket" asp-route-MovieId="@item.movie.Id">Choose seats</a>
+                                        }else{
+                                            <a class="btn btn-primary" asp-action="signup" asp-controller="Auth">Choose seats</a>
+                                        }
                                     </div>
                                 </div>
                             </div>
@@ -62,6 +69,98 @@
             <span class="visually-hidden">Next</span>
         </button>
     </div>
+
+    <section id="popular-movies">
+        <h2 class="text-left my-5 text-4xl font-bold text-gray-800 uppercase tracking-wide b pb-2">Popular Movies</h2>
+
+        <div id="popularMoviesCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                @* Group movies into chunks of 3 *@
+                @{
+                    var groupedPopularMovies = popularMovies.Select((movie, index) => new { movie, index })
+                    .GroupBy(x => x.index / 3)
+                    .ToList();
+                }
+
+                @for (int i = 0; i < groupedPopularMovies.Count; i++)
+                {
+                    <div class="carousel-item @(i == 0 ? "active" : "")">
+                        <div class="row g-4 justify-content-center">
+                            @foreach (var item in groupedPopularMovies[i])
+                            {
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <a asp-action="MovieDetails" asp-controller="Ticket" asp-route-MovieId="@item.movie.Id" style="text-decoration:none;">
+                                            <img src="@item.movie.MovieImage" class="card-img-top" alt="@item.movie.Title">
+                                        </a>
+                                        <div class="card-body text-center">
+                                            <h5 class="card-title">@item.movie.Title</h5>
+                                            <p class="card-text">Release Date: @item.movie.ReleaseDate.ToString("MMMM dd, yyyy")</p>
+                                            @if (User.Identity.IsAuthenticated)
+                                            {
+                                                <a class="btn btn-primary" asp-action="Seats" asp-controller="Ticket" asp-route-MovieId="@item.movie.Id">Choose seats</a>
+                                            }
+                                            else
+                                            {
+                                                <a class="btn btn-primary" asp-action="signup" asp-controller="Auth">Choose seats</a>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- Carousel Controls -->
+            <button class="carousel-control-prev" type="button" data-bs-target="#popularMoviesCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#popularMoviesCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </section>
+
+
+    @{
+        var topMovie = await _ticketService.GetTopMovieByBookings();
+    }
+     @if (topMovie != null)
+                {
+        <section class="bg-light py-5 mt-5">
+            <div class="container text-center">
+                <h2 class="text-4xl font-semibold text-gray-800 mb-5">Featured Movies</h2>
+                <div class="row justify-content-center">
+                    <!-- Top Movie by Bookings Card -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card shadow-lg rounded-3 mb-4">
+                            <div class="row g-0">
+                                <!-- Movie Image -->
+                                <div class="col-12 col-md-6">
+                                    <img src="@topMovie.MovieImage" alt="@topMovie.Title" class="img-fluid rounded-start" />
+                                </div>
+                                <!-- Movie Content -->
+                                <div class="col-12 col-md-6 d-flex flex-column justify-content-between p-4">
+                                    <h5 class="card-title text-xl font-semibold text-dark mb-2">@topMovie.Title</h5>
+                                    <p class="card-text text-sm text-muted mb-3">Release Date: @topMovie.ReleaseDate.ToString("MMMM dd, yyyy")</p>
+                                    <p class="card-text text-sm text-truncate" style="max-height: 100px; overflow: hidden;">@topMovie.Description</p>
+                                    <a href="@Url.Action("MovieDetails", "Ticket", new { MovieId = topMovie.Id })" class="btn btn-success mt-3">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+
+    }
+
 </header>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>

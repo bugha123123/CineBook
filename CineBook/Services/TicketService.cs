@@ -188,6 +188,16 @@ namespace CineBook.Services
             return await _dbcontext.Movies.ToListAsync();
         }
 
+        public async Task<List<Movie>> GetPopularMovies()
+        {
+            
+            var popularMovies = await _dbcontext.Movies
+                .Where(m => m.Rating > 7)  
+                .OrderByDescending(m => m.Rating)  
+                .ToListAsync();
+
+            return popularMovies;
+        }
         public async Task<List<Seat>> GetSeatsByMovieId(int MovieId)
         {
             return await _dbcontext.Seats.Where(x => x.MovieId == MovieId).ToListAsync();
@@ -204,6 +214,45 @@ namespace CineBook.Services
 
             return upcomingMovies;
         }
+
+        public async Task<Movie> GetTopMovieByBookings()
+        {
+            //  Get all the bookings along with their booked seats and movie IDs
+            var bookings = await _dbcontext.Bookings
+                .Where(b => b.BookedSeats.Any()) // ensures that the booking is not empty
+                .Select(b => new
+                {
+                    b.MovieId,
+                    BookedSeatsCount = b.BookedSeats.Count  
+                })
+                .ToListAsync();
+
+            //Group the bookings by MovieId and calculate the total booked seats
+            var topMovieBooking = bookings
+                .GroupBy(b => b.MovieId)
+                .Select(g => new
+                {
+                    MovieId = g.Key,
+                    TotalBookedSeats = g.Sum(b => b.BookedSeatsCount)  
+                })
+                .OrderByDescending(g => g.TotalBookedSeats)  
+                .FirstOrDefault();  
+
+            if (topMovieBooking == null) return null;  
+
+            //  Retrieve the full movie details using the MovieId
+            var movie = await _dbcontext.Movies
+                .Where(m => m.Id == topMovieBooking.MovieId)
+                .FirstOrDefaultAsync();
+
+            return movie;
+        }
+
+
+
+
+
+
 
         public async Task RemoveBooking(int BookingId)
         {

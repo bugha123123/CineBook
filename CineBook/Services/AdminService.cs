@@ -1,4 +1,5 @@
 ﻿using CineBook.ApplicationDbContext;
+using CineBook.DTO;
 using CineBook.Interface;
 using CineBook.Models;
 using Microsoft.AspNetCore.Identity;
@@ -122,8 +123,70 @@ namespace CineBook.Services
 
         public async Task<List<Booking>> GetAllBookings()
         {
-            var TotalBookings = await _DBContext.Bookings.Include(x => x.movie).ToListAsync();
+            var TotalBookings = await _DBContext.Bookings.Include(x => x.movie).Include(x => x.user).ToListAsync();
             return TotalBookings;
         }
+        public async Task<SalesReport> GenerateSalesReport(int lastNDays)
+        {
+            
+            var startDate = DateTime.Now.Date.AddDays(-lastNDays);
+
+            var bookings = await _DBContext.Bookings
+                .Where(b => b.BookedAt >= startDate && b.BookedAt <= DateTime.Now)
+                .Include(b => b.user) 
+                .Include(b => b.movie)
+                .Include(b => b.BookedSeats) 
+                .ToListAsync();
+
+            
+            var totalBookedSeats = bookings.Sum(booking => booking.BookedSeats.Count);
+
+            
+            
+            var totalRevenue = await GetTotalRevenue();
+
+        
+
+            return new SalesReport
+            {
+                DateRange = $"{startDate:yyyy-MM-dd} to {DateTime.Now:yyyy-MM-dd}",
+                TotalBookedSeats = totalBookedSeats,
+                TotalRevenue = totalRevenue,
+              
+            };
+        }
+        public async Task<Booking> GetBookingById(int BookingId)
+        {
+            var FoundBooking = await _DBContext.Bookings.FirstOrDefaultAsync(b => b.Id == BookingId);
+
+
+
+            return FoundBooking;
+        }
+        public async Task RemoveBooking(int BookingId)
+        {
+            var BookingToRemove = await _DBContext.Bookings
+                                                  .Include(x => x.BookedSeats)
+                                                  .FirstOrDefaultAsync(x => x.Id == BookingId);
+
+            if (BookingToRemove == null)
+            {
+                return;
+            }
+
+            // Flag each booked seat as unavailable
+            foreach (var seat in BookingToRemove.BookedSeats)
+            {
+                seat.IsAvailable = true;
+
+            }
+
+            // Remove the booking from the database
+            _DBContext.Bookings.Remove(BookingToRemove);
+
+            await _DBContext.SaveChangesAsync();
+        }
+
+
     }
 }

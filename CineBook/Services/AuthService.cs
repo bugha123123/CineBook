@@ -56,6 +56,7 @@ namespace CineBook.Services
             var result = await _userManager.CreateAsync(user, registerViewModel.Password);
             if (result.Succeeded)
             {
+                // you can change the role here to add admin User to DB.
                 await _userManager.AddToRoleAsync(user, "USER");
                 await _signInManager.SignInAsync(user, isPersistent: false);
                 await SendWelcomeEmailToUser(registerViewModel.Email);
@@ -129,9 +130,9 @@ namespace CineBook.Services
             <h2>Welcome to Spooky Bookstore!</h2>
         </div>
         <p>Hi there!</p>
-        <p>We're excited to have you as a new member of the Spooky Bookstore community! Get ready to dive into the world of books and enjoy a wide selection of genres, discounts, and more!</p>
+        <p>We're excited to have you as a new member of the CineBook  community! Get ready to dive into the world of movies</p>
         <p>To get started, click the button below and explore our latest arrivals and special offers:</p>
-        <a href='https://localhost:7194/Home/Index' class='button'>Start Shopping</a>
+        <a href='https://localhost:7194/Home/Index' class='button'>Start Booking</a>
         <p class='footer'>If you have any questions or need help, feel free to reach out to our support team.</p>
     </div>
 </body>

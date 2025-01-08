@@ -19,5 +19,9 @@ namespace CineBook.Interface
 
         Task<List<Movie>> GetSoonComingMovies();
         Task<List<Movie>> GetComingNowMovies();
+
+        Task<List<Movie>> GetPopularMovies();
+
+        Task<Movie> GetTopMovieByBookings();
     }
 }
