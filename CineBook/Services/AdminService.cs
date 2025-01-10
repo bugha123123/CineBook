@@ -13,11 +13,13 @@ namespace CineBook.Services
         private readonly AppDbContextion _DBContext;
         private readonly IAuthService _AuthService;
         private readonly UserManager<User> _UserManager;
-        public AdminService(AppDbContextion dBContext, IAuthService authService, UserManager<User> userManager)
+        private readonly IEmailService _emailService;
+        public AdminService(AppDbContextion dBContext, IAuthService authService, UserManager<User> userManager, IEmailService emailService)
         {
             _DBContext = dBContext;
             _AuthService = authService;
             _UserManager = userManager;
+            _emailService = emailService;
         }
 
         public async Task<int> GetTotalRevenue()
@@ -53,7 +55,7 @@ namespace CineBook.Services
         public async Task<List<User>> GetTotalUsers()
         {
             var loggedInUser =await _AuthService.GetLoggedInUserAsync();
-            var user = await _DBContext.Users.Where(x => x.UserName != loggedInUser.UserName).ToListAsync();
+            var user = await _DBContext.Users.ToListAsync();
             return user;
         }
 
@@ -185,6 +187,117 @@ namespace CineBook.Services
             _DBContext.Bookings.Remove(BookingToRemove);
 
             await _DBContext.SaveChangesAsync();
+        }
+
+        public async Task RemoveUser(string UserId)
+        {
+            var FoundUser = await GetUserById(UserId);
+
+            if (FoundUser == null)
+                return;
+
+            _DBContext.Users.Remove(FoundUser);
+            await _DBContext.SaveChangesAsync();
+          
+        }
+
+        public async Task<User> GetUserById(string UserId)
+        {
+            var FoundUser = await _UserManager.FindByIdAsync(UserId);
+
+            return FoundUser;
+        }
+
+        public async Task SendVerificationEmail(string Gmail, string userId)
+        {
+            var user = await _UserManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                // Handle user not found scenario
+                return;
+            }
+
+            var token = await _UserManager.GenerateEmailConfirmationTokenAsync(user);
+            if (string.IsNullOrEmpty(token))
+            {
+                // Handle token generation failure
+                return;
+            }
+
+            user.VerificationToken = token;  // Assign the token to the user
+            await _DBContext.SaveChangesAsync();  // Save the token to the database
+
+            var tokenGenerationTime = DateTime.Now;
+            string verificationUrl = $"https://localhost:7194/Admin/VerifyOwnership?userId={userId}&token={user.VerificationToken}&time={tokenGenerationTime}";
+
+            string body = @"
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset='UTF-8'>
+            <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+            <title>Verify Your Email</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    background-color: #f9f9f9;
+                    margin: 0;
+                    padding: 0;
+                }
+                .email-container {
+                    max-width: 600px;
+                    margin: 20px auto;
+                    background-color: #ffffff;
+                    padding: 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                }
+                .email-header {
+                    text-align: center;
+                    color: #333;
+                    font-size: 24px;
+                    font-weight: bold;
+                    margin-bottom: 20px;
+                }
+                .email-content {
+                    text-align: center;
+                    color: #555;
+                    font-size: 16px;
+                    margin-bottom: 20px;
+                    line-height: 1.6;
+                }
+                .verify-button {
+                    display: inline-block;
+                    padding: 10px 20px;
+                    font-size: 16px;
+                    color: #ffffff;
+                    background-color: #007bff;
+                    text-decoration: none;
+                    border-radius: 5px;
+                }
+                .verify-button:hover {
+                    background-color: #0056b3;
+                }
+            </style>
+        </head>
+        <body>
+            <div class='email-container'>
+                <div class='email-header'>
+                    Verify Your Email Address
+                </div>
+                <div class='email-content'>
+                    <p>Hello,</p>
+                    <p>We received a request to verify your email address. Please confirm ownership by clicking the button below:</p>
+                    <a href='" + verificationUrl + @"' class='verify-button'>Verify Email</a>
+                    <p>If you didn't request this, you can ignore this email.</p>
+                    <p>Thank you!</p>
+                </div>
+            </div>
+        </body>
+        </html>";
+
+            // Send the email
+            await _emailService.SendEmailAsync(Gmail, "Verify Your Email", body);
         }
 
 

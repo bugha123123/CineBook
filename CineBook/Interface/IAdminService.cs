@@ -24,5 +24,10 @@ namespace CineBook.Interface
         Task RemoveBooking(int BookingId);
 
         Task<Booking> GetBookingById(int BookingId);
+
+        Task RemoveUser(string UserId);
+        Task<User> GetUserById(string UserId);
+
+         Task SendVerificationEmail(string Gmail, string userId);
     }
 }

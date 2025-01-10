@@ -7,6 +7,9 @@ namespace CineBook.Models
     {
         public List<Booking> booking { get; set; }
 
-        
+        public bool IsVerified { get; set; }
+        public DateTime? VerifiedAt { get; set; }
+
+        public string? VerificationToken { get; set; }
     }
 }

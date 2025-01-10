@@ -52,8 +52,8 @@ namespace CineBook.Services
         public async Task RegisterUser(RegisterViewModel registerViewModel)
         {
             var user = new User { UserName = registerViewModel.Email, Email = registerViewModel.Email };
-
             var result = await _userManager.CreateAsync(user, registerViewModel.Password);
+                
             if (result.Succeeded)
             {
                 // you can change the role here to add admin User to DB.
