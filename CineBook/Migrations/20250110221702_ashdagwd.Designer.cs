@@ -4,6 +4,7 @@ using CineBook.ApplicationDbContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CineBook.Migrations
 {
     [DbContext(typeof(AppDbContextion))]
-    partial class AppDbContextionModelSnapshot : ModelSnapshot
+    [Migration("20250110221702_ashdagwd")]
+    partial class ashdagwd
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -151,9 +154,6 @@ namespace CineBook.Migrations
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("VerificationToken")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("VerifiedAt")
                         .HasColumnType("datetime2");

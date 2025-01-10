@@ -218,13 +218,13 @@ namespace CineBook.Services
             }
 
             var token = await _UserManager.GenerateEmailConfirmationTokenAsync(user);
+            user.VerificationToken = token;
             if (string.IsNullOrEmpty(token))
             {
                 // Handle token generation failure
                 return;
             }
 
-            user.VerificationToken = token;  // Assign the token to the user
             await _DBContext.SaveChangesAsync();  // Save the token to the database
 
             var tokenGenerationTime = DateTime.Now;

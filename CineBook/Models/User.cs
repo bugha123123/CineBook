@@ -10,6 +10,6 @@ namespace CineBook.Models
         public bool IsVerified { get; set; }
         public DateTime? VerifiedAt { get; set; }
 
-        public string? VerificationToken { get; set; }
+        public string? VerificationToken { get; set; } = null;
     }
 }

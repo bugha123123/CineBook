@@ -25,7 +25,7 @@ namespace CineBook.Controllers
             return View();
         }
 
-        public async Task<IActionResult> VerifyOwnership()
+        public async Task<IActionResult> Ownership()
         {
 
             return View();
@@ -155,7 +155,7 @@ namespace CineBook.Controllers
                 await _userManager.UpdateAsync(user); // Save changes to the database
 
                 TempData["Message"] = "Email successfully verified!";
-                return RedirectToAction("VerifyOwnership", "Admin");
+                return RedirectToAction("OwnerShip", "Admin");
             }
             else
             {
