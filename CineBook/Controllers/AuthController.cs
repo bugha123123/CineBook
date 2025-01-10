@@ -46,7 +46,7 @@ namespace CineBook.Controllers
         {
 
             await _authService.LogOutUser();
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("signin", "Auth");
 
 
         }

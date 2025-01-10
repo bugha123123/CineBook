@@ -1,6 +1,7 @@
 ﻿using CineBook.Interface;
 using CineBook.Models;
 using CineBook.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,7 +17,7 @@ namespace CineBook.Controllers
             _adminService = adminService;
             _userManager = userManager;
         }
-
+        [Authorize(Roles ="ADMIN")]
         public async Task<IActionResult> MainAdminPage()
         {
             var movies = await _adminService.GetAllMovies();
@@ -36,6 +37,7 @@ namespace CineBook.Controllers
 
             return View();
         }
+        [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> ManageBookings()
         {
             var  TotalBookings = await _adminService.GetAllBookings();
@@ -43,6 +45,7 @@ namespace CineBook.Controllers
             return View(TotalBookings);
         }
 
+        [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> GenerateReport(int? dateRange)
         {
 

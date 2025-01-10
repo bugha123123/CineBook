@@ -1,5 +1,6 @@
 ﻿using CineBook.Interface;
 using CineBook.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CineBook.Controllers
@@ -13,13 +14,12 @@ namespace CineBook.Controllers
             this.ticketService = ticketService;
         }
 
-    
+        [Authorize]
         public async Task<IActionResult> BookingHistory()
         {
             var BookingHistoryForUser = await ticketService.GetBookingHistoryForUser();
             return View(BookingHistoryForUser);
         }
-
         public async Task<IActionResult> MovieDetails(int MovieId)
         {
             var MovieById = await ticketService.GetMovieById(MovieId);  
@@ -29,11 +29,13 @@ namespace CineBook.Controllers
         {
             return View();
         }
+        [Authorize]
         public async Task<IActionResult> ComingSoon()
         {
             var result = await ticketService.GetSoonComingMovies();
             return View(result);
         }
+        [Authorize]
         public async Task<IActionResult> ComingNow()
         {
             var result = await ticketService.GetComingNowMovies();
