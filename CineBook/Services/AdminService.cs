@@ -331,7 +331,10 @@ namespace CineBook.Services
         }
 
 
-       
-
+        //TODO
+        public Task UpdateChatStatus(string ChatId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

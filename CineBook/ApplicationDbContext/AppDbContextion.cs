@@ -18,7 +18,9 @@ namespace CineBook.ApplicationDbContext
 
         public DbSet<Booking> Bookings { get; set; }
 
+        public DbSet<Chat> Chats { get; set; }
 
+        public DbSet<Message> Messages { get; set; }
 
         public static async Task SeedRolesAsync(IServiceProvider serviceProvider, RoleManager<IdentityRole> roleManager)
         {

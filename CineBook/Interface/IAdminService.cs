@@ -32,6 +32,8 @@ namespace CineBook.Interface
 
         Task SendResetPasswordEmail(string Gmail);
 
+        Task UpdateChatStatus(string ChatId);
+
         
     }
 }

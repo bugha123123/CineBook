@@ -1,0 +1,90 @@
+﻿@using CineBook.Interface
+@inject IChatService _chatService;
+
+@{
+    var ChatIdFromUrl = Context.Request.Query["ChatId"];
+    var CurrentChat = await _chatService.GetChatById(ChatIdFromUrl);
+}
+
+<div id="compactChat" class="fixed bottom-4 right-4 w-[400px] bg-gray-900 rounded-lg shadow-xl flex flex-col">
+    <!-- Compact Chat Header -->
+    <div class="p-4 border-b border-gray-700 flex justify-between items-center">
+        <h3 class="text-lg font-semibold text-white">New Support Request</h3>
+        <button id="closeCompactChat" class="text-gray-400 hover:text-white">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+            </svg>
+        </button>
+    </div>
+
+    <!-- Chat Status and Topic Section (Above the Messages) -->
+    <div class="p-4 border-b border-gray-700 text-white bg-gray-800">
+        <div class="flex justify-between mb-2">
+            <span><strong>Status:</strong> <span id="chatStatus">@CurrentChat.Status</span></span>
+            <span><strong>Topic:</strong> <span id="chatTopic">@CurrentChat.Topic</span></span>
+        </div>
+    </div>
+
+    <!-- Compact Chat Messages -->
+    <div id="compactChatMessages" class="flex-1 overflow-y-auto p-4 space-y-4">
+        <!-- Admin initial message will be displayed here -->
+        <div class="flex items-start gap-3">
+            <div class="bg-gray-800 rounded-lg p-3 max-w-[80%]">
+                <div class="text-sm text-gray-400 mb-1">
+                    Support Agent / <span id="botMessageTime"></span>
+                </div>
+                <p id="botMessage" class="text-white"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Compact Chat Input -->
+    <div class="p-4 border-t border-gray-700">
+        <form id="compactChatForm" class="flex gap-2" asp-action="SendChatMessageAction" asp-controller="Help" method="post">
+            @if (CurrentChat.Status.ToString().ToLower() == "pending" || CurrentChat.Status.ToString().ToLower() == "closed")
+            {
+                <input type="text" id="compactMessageInput" placeholder="Type your message..." disabled name="Content" class="flex-1 bg-gray-800 border border-gray-700 rounded p-2 text-white focus:outline-none focus:border-blue-500">
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" disabled>Send</button>
+            }
+            else
+            {
+                <input type="text" id="compactMessageInput" placeholder="Type your message..." name="Content" class="flex-1 bg-gray-800 border border-gray-700 rounded p-2 text-white focus:outline-none focus:border-blue-500">
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Send</button>
+            }
+        </form>
+
+    </div>
+</div>
+
+<script>
+    // Close compact chat window
+    document.getElementById('closeCompactChat')?.addEventListener('click', () => {
+        document.getElementById('compactChat')?.classList.add('hidden');
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const chatStatus = '@CurrentChat.Status'.toLowerCase(); // Get the chat status as a string
+        const botMessageElement = document.getElementById('botMessage');
+        const botMessageTime = document.getElementById('botMessageTime');
+
+        let botMessage = '';
+        let formattedDate = new Date().toLocaleString('en-US', {
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: true
+        });
+        botMessageTime.innerText = formattedDate;
+
+        // Check chat status and set the bot message accordingly
+        if (chatStatus === 'pending') {
+            botMessage = 'Please kindly wait for support to assist you.';
+        } else if (chatStatus === 'closed') {
+            botMessage = 'Thank you for your time. The chat has been closed. Goodbye!';
+        } else if (chatStatus === 'open') {
+            botMessage = 'Hello! How can we assist you today? Please let us know your issue.';
+        }
+
+        // Set the bot message in the chat
+        botMessageElement.innerText = botMessage;
+    });
+</script>

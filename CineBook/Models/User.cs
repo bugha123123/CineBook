@@ -13,5 +13,7 @@ namespace CineBook.Models
         public string? VerificationToken { get; set; } = null;
 
         public string? ResetPasswordToken { get; set; } = null;
+
+        public List<Message> Messages { get; set; }
     }
 }
