@@ -1,5 +1,6 @@
 ﻿using CineBook.DTO;
 using CineBook.Interface;
+using CineBook.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CineBook.Controllers
@@ -7,10 +8,11 @@ namespace CineBook.Controllers
     public class AuthController : Controller
     {
         private readonly IAuthService _authService;
-
-        public AuthController(IAuthService authService)
+        private readonly IAdminService _adminService;
+        public AuthController(IAuthService authService, IAdminService adminService)
         {
             _authService = authService;
+            _adminService = adminService;
         }
 
         public IActionResult signup()
@@ -22,6 +24,14 @@ namespace CineBook.Controllers
             return View();
         }
 
+        public IActionResult resetpassword()
+        {
+            return View();
+        }
+        public IActionResult forgotpassword()
+        {
+            return View();
+        }
         public async Task<IActionResult> SigninUser(LogInViewModel logInViewModel)
         {
             if (ModelState.IsValid)
@@ -49,6 +59,26 @@ namespace CineBook.Controllers
             return RedirectToAction("signin", "Auth");
 
 
+        }
+
+        public async Task<IActionResult> ResetPasswordAction(string Gmail, string token, string newPassword)
+        {
+
+            await _authService.ResetPassword(Gmail,token,newPassword);
+            return RedirectToAction("signin", "Auth");
+
+
+        }
+
+
+        public async Task<IActionResult> User_SendResetPasswordGmail(string Gmail)
+        {
+            if (ModelState.IsValid)
+            {
+                await _adminService.SendResetPasswordEmail(Gmail);
+                return RedirectToAction("signin", "Auth");
+            }
+            return View();
         }
     }
 }

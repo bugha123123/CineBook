@@ -29,5 +29,9 @@ namespace CineBook.Interface
         Task<User> GetUserById(string UserId);
 
          Task SendVerificationEmail(string Gmail, string userId);
+
+        Task SendResetPasswordEmail(string Gmail);
+
+        
     }
 }

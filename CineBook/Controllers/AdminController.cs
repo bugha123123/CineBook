@@ -17,7 +17,7 @@ namespace CineBook.Controllers
             _adminService = adminService;
             _userManager = userManager;
         }
-        [Authorize(Roles ="ADMIN")]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> MainAdminPage()
         {
             var movies = await _adminService.GetAllMovies();
@@ -153,9 +153,9 @@ namespace CineBook.Controllers
             if (result.Succeeded)
             {
                 user.IsVerified = true;
-                user.VerifiedAt = DateTime.Now;  // Set the verification time
-                user.VerificationToken = null;  // Clear the token after successful verification
-                await _userManager.UpdateAsync(user); // Save changes to the database
+                user.VerifiedAt = DateTime.Now;  
+                user.VerificationToken = null;  
+                await _userManager.UpdateAsync(user); 
 
                 TempData["Message"] = "Email successfully verified!";
                 return RedirectToAction("OwnerShip", "Admin");
@@ -167,6 +167,15 @@ namespace CineBook.Controllers
             }
         }
 
+        public async Task<IActionResult> Admin_SendResetPasswordGmail(string Gmail)
+        {
+            if (ModelState.IsValid)
+            {
+                await _adminService.SendResetPasswordEmail(Gmail);
+                return RedirectToAction("MainAdminPage", "Admin");
+            }
+            return View();
+        }
 
 
 

@@ -5,6 +5,7 @@ using CineBook.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
+using System.Net;
 
 namespace CineBook.Services
 {
@@ -55,7 +56,7 @@ namespace CineBook.Services
         public async Task<List<User>> GetTotalUsers()
         {
             var loggedInUser =await _AuthService.GetLoggedInUserAsync();
-            var user = await _DBContext.Users.ToListAsync();
+            var user = await _DBContext.Users.Where(x => x.Id != loggedInUser.Id).ToListAsync();
             return user;
         }
 
@@ -213,7 +214,6 @@ namespace CineBook.Services
             var user = await _UserManager.FindByIdAsync(userId);
             if (user == null)
             {
-                // Handle user not found scenario
                 return;
             }
 
@@ -221,11 +221,10 @@ namespace CineBook.Services
             user.VerificationToken = token;
             if (string.IsNullOrEmpty(token))
             {
-                // Handle token generation failure
                 return;
             }
 
-            await _DBContext.SaveChangesAsync();  // Save the token to the database
+            await _DBContext.SaveChangesAsync();
 
             var tokenGenerationTime = DateTime.Now;
             string verificationUrl = $"https://localhost:7194/Admin/VerifyOwnership?userId={userId}&token={user.VerificationToken}&time={tokenGenerationTime}";
@@ -288,7 +287,7 @@ namespace CineBook.Services
                 <div class='email-content'>
                     <p>Hello,</p>
                     <p>We received a request to verify your email address. Please confirm ownership by clicking the button below:</p>
-                    <a href='" + verificationUrl + @"' class='verify-button'>Verify Email</a>
+                    <a style='text-decoration:none;' href='" + verificationUrl + @"' class='verify-button'>Verify Email</a>
                     <p>If you didn't request this, you can ignore this email.</p>
                     <p>Thank you!</p>
                 </div>
@@ -300,6 +299,39 @@ namespace CineBook.Services
             await _emailService.SendEmailAsync(Gmail, "Verify Your Email", body);
         }
 
+        public async Task SendResetPasswordEmail(string Gmail)
+        {
+            // Find the user by email
+            var user = await _UserManager.FindByEmailAsync(Gmail);
+
+            // Check if the user exists
+            if (user == null)
+                return;
+
+            // Generate a verification token
+          user.ResetPasswordToken = await _UserManager.GeneratePasswordResetTokenAsync(user);
+            user.VerifiedAt = DateTime.UtcNow;
+
+            // Save the token and timestamp to the user
+            await _UserManager.UpdateAsync(user);
+
+            // Create a reset URL
+            var resetUrl = $"https://localhost:7194/Auth/resetpassword?gmail={Gmail}&token={user.ResetPasswordToken}";
+
+            // Define the email body
+            var body = $@"
+        <p>Dear {user.UserName},</p>
+        <p>You requested a password reset. Please click the link below to reset your password:</p>
+        <p><a href='{resetUrl}'>Reset Password</a></p>
+        <p>If you did not request this, please ignore this email.</p>
+        <p>Best regards,<br>Your Team</p>";
+
+            // Send the email
+            await _emailService.SendEmailAsync(Gmail, "Reset Your Password", body);
+        }
+
+
+       
 
     }
 }

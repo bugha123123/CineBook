@@ -11,5 +11,7 @@ namespace CineBook.Interface
         Task LogOutUser();
 
         Task SendWelcomeEmailToUser(string email);
+
+        Task ResetPassword(string Gmail, string token, string newPassword);
     }
 }

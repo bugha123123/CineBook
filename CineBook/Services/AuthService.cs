@@ -2,6 +2,7 @@
 using CineBook.Interface;
 using CineBook.Models;
 using Microsoft.AspNetCore.Identity;
+using System.Net;
 
 namespace CineBook.Services
 {
@@ -141,6 +142,68 @@ namespace CineBook.Services
 
              await emailService.SendEmailAsync(email, "Welcome to CineBook!", htmlBody);
         }
+
+
+        public async Task ResetPassword(string Gmail, string token, string newPassword)
+        {
+            // Find the user by email
+            var user = await _userManager.FindByEmailAsync(Gmail);
+
+            // Check if the user exists
+            if (user == null)
+            {
+                throw new Exception("User not found.");
+            }
+
+            // Check if the ResetPasswordToken is null or empty
+            if (string.IsNullOrEmpty(user.ResetPasswordToken))
+            {
+                throw new Exception("ResetPasswordToken is not set for the user.");
+            }
+
+            // Decode the token and validate it
+            var decodedToken = WebUtility.UrlDecode(token); 
+            var decodedUserToken = WebUtility.UrlDecode(user.ResetPasswordToken);  
+
+            // Compare the decoded tokens
+            if (decodedUserToken.Trim() != decodedToken.Trim())
+            {
+                Console.WriteLine($"Stored Token: '{user.ResetPasswordToken}'");
+                Console.WriteLine($"Provided Token: '{decodedToken}'");
+                throw new Exception("Invalid token.");
+            }
+
+
+            // Check if the token has expired (5 minutes)
+            if (!user.VerifiedAt.HasValue || DateTime.UtcNow > user.VerifiedAt.Value.AddMinutes(5))
+            {
+                throw new Exception("Token has expired.");
+            }
+
+            // Reset the user's password
+            var passwordHash = _userManager.PasswordHasher.HashPassword(user, newPassword);
+            user.PasswordHash = passwordHash;
+
+            // Clear the token and its timestamp
+            user.ResetPasswordToken = null;
+            user.VerifiedAt = null;
+
+            // Update the user in the database
+            var updateResult = await _userManager.UpdateAsync(user);
+            if (!updateResult.Succeeded)
+            {
+                throw new Exception("Failed to update user: " + string.Join(", ", updateResult.Errors.Select(e => e.Description)));
+            }
+
+            // Notify the user of the successful reset
+            var body = $@"
+    <p>Dear {user.UserName},</p>
+    <p>Your password has been reset successfully.</p>
+    <p>Best regards,<br>CineBook</p>";
+
+            await emailService.SendEmailAsync(Gmail, "Password Reset Successful", body);
+        }
+
 
     }
 }

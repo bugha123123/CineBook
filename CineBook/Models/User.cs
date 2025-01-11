@@ -11,5 +11,7 @@ namespace CineBook.Models
         public DateTime? VerifiedAt { get; set; }
 
         public string? VerificationToken { get; set; } = null;
+
+        public string? ResetPasswordToken { get; set; } = null;
     }
 }
