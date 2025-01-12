@@ -5,24 +5,24 @@
 namespace CineBook.Migrations
 {
     /// <inheritdoc />
-    public partial class asdhahwd : Migration
+    public partial class addingroleproptomessagemodel : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "VerificationToken",
-                table: "AspNetUsers",
-                type: "nvarchar(max)",
-                nullable: true);
+            migrationBuilder.RenameColumn(
+                name: "AgentId",
+                table: "Messages",
+                newName: "Role");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "VerificationToken",
-                table: "AspNetUsers");
+            migrationBuilder.RenameColumn(
+                name: "Role",
+                table: "Messages",
+                newName: "AgentId");
         }
     }
 }

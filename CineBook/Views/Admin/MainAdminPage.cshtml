@@ -83,16 +83,16 @@
                             Ticket Management
                         </a>
                     </li>
-                    <li class="mb-4">
+                  @*   <li class="mb-4">
                         <a href="javascript:void(0);" onclick="showSection('reviews')" class="flex items-center text-gray-300 hover:text-white">
                             <i class="fas fa-star mr-3"></i>
                             Reviews and Feedback
                         </a>
-                    </li>
+                    </li> *@
                     <li class="mb-4">
-                        <a href="javascript:void(0);" onclick="showSection('revenueManagement')" class="flex items-center text-gray-300 hover:text-white">
+                        <a href="javascript:void(0);" onclick="showSection('chatManagement')" class="flex items-center text-gray-300 hover:text-white">
                             <i class="fas fa-chart-line mr-3"></i>
-                            Revenue Management
+                            Chat Management
                         </a>
                     </li>
                 </ul>
@@ -333,18 +333,116 @@
 
             </div>
 
-            <!-- Reviews Section -->
+      @*       <!-- Reviews Section -->
             <div id="reviews" class="section" style="display: none;">
-                <h3>Reviews and Feedback Section</h3>
+                <h3>Reviews and Feedback </h3>
                 <!-- Your content here -->
-            </div>
+            </div> *@
 
-
+            @{
+                var AllChats = await _AdminService.GetAllChats();
+            }
           @*   TODO *@
             <!-- Revenue Management Section -->
-            <div id="revenueManagement" class="section" style="display: none;">
-                <h3>Support Management Section</h3>
-                <!-- Your content here -->
+            <div id="chatManagement" class="section" style="display: none;">
+                <div class="bg-white shadow-md rounded-lg overflow-hidden">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Chat ID</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Activity</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                            </tr>
+                        </thead>
+                     
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @foreach (var item in AllChats)
+                            {
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">@item.ChatId</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">@item.User.UserName</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <!-- Status with dropdown -->
+                                        <div class="relative">
+                                            @{
+                                                string bgColorClass = "";
+                                                string textColorClass = "";
+
+                                                switch (item.Status)
+                                                {
+                                                    case Chat.ChatStatus.Open:
+                                                        bgColorClass = "bg-green-100";
+                                                        textColorClass = "text-green-800";
+                                                        break;
+                                                    case Chat.ChatStatus.Closed:
+                                                        bgColorClass = "bg-gray-100";
+                                                        textColorClass = "text-gray-800";
+                                                        break;
+                                                    case Chat.ChatStatus.Pending:
+                                                        bgColorClass = "bg-yellow-100";
+                                                        textColorClass = "text-yellow-800";
+                                                        break;
+                                                    default:
+                                                        bgColorClass = "bg-red-100";
+                                                        textColorClass = "text-red-800";
+                                                        break;
+                                                }
+                                            }
+                                            <button class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full @bgColorClass @textColorClass"
+                                                    onclick="toggleDropdown('dropdown-@item.ChatId')">
+                                                @item.Status
+                                            </button>
+
+                                            <!-- Dropdown -->
+                                            <div id="dropdown-@item.ChatId" class="hidden absolute mt-2 bg-white border rounded shadow-lg z-10">
+                                                @foreach (var status in Enum.GetValues(typeof(Chat.ChatStatus)))
+                                                {
+                                                    if ((Chat.ChatStatus)status != item.Status)
+                                                    {
+                                                        <form asp-action="Admin_ChangeStatusOfChat" method="post" asp-controller="Admin">
+                                                            <input type="hidden" name="ChatId" value="@item.ChatId" />
+                                                            <input type="hidden" name="status" value="@status" />
+                                                            <button type="submit"
+                                                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">
+                                                                @status
+                                                            </button>
+                                                        </form>
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">@item.CreatedAt</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        @if (item.Status == Chat.ChatStatus.Closed)
+                                        {
+                                            <a class="text-gray-400 cursor-not-allowed">Closed</a>
+                                        }
+                                        else if (item.Status == Chat.ChatStatus.Open)
+                                        {
+                                            <a class="text-gray-400 cursor-not-allowed">Open</a>
+                                        }
+                                        else
+                                        {
+                                            <form asp-action="Admin_JoinChatAndChangeStatus" asp-controller="Admin" method="post">
+                                                <input name="ChatId" value="@item.ChatId"  hidden/>
+                                                <button type="submit">
+                                                    <a class="text-gray-400" style="cursor:pointer;text-decoration:none;">Join</a>
+
+                                                </button>
+                                            </form>
+                                           
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+
+                   
+                    </table>
+                </div>
             </div>
 
         </main>
@@ -354,6 +452,10 @@
 </html>
 
 <script>
+    function toggleDropdown(id) {
+           const dropdown = document.getElementById(id);
+           dropdown.classList.toggle('hidden');
+       }
 
            document.addEventListener("DOMContentLoaded", function() {
         const movieSelect = document.getElementById("movieId");

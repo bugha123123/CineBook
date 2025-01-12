@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CineBook.Migrations
 {
     [DbContext(typeof(AppDbContextion))]
-    [Migration("20250108210452_addingRatingProp")]
-    partial class addingRatingProp
+    [Migration("20250112202426_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -57,6 +57,72 @@ namespace CineBook.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Bookings");
+                });
+
+            modelBuilder.Entity("CineBook.Models.Chat", b =>
+                {
+                    b.Property<string>("ChatId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("ClosedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Topic")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("ChatId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Chats");
+                });
+
+            modelBuilder.Entity("CineBook.Models.Message", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("AgentAnswered")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("AgentId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ChatId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("SentAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChatId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("CineBook.Models.Movie", b =>
@@ -119,6 +185,9 @@ namespace CineBook.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsVerified")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
@@ -142,6 +211,9 @@ namespace CineBook.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<string>("ResetPasswordToken")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -151,6 +223,12 @@ namespace CineBook.Migrations
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("VerificationToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("VerifiedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -349,6 +427,32 @@ namespace CineBook.Migrations
                     b.Navigation("user");
                 });
 
+            modelBuilder.Entity("CineBook.Models.Chat", b =>
+                {
+                    b.HasOne("CineBook.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("CineBook.Models.Message", b =>
+                {
+                    b.HasOne("CineBook.Models.Chat", null)
+                        .WithMany("Messages")
+                        .HasForeignKey("ChatId");
+
+                    b.HasOne("CineBook.Models.User", "User")
+                        .WithMany("Messages")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -420,6 +524,11 @@ namespace CineBook.Migrations
                     b.Navigation("BookedSeats");
                 });
 
+            modelBuilder.Entity("CineBook.Models.Chat", b =>
+                {
+                    b.Navigation("Messages");
+                });
+
             modelBuilder.Entity("CineBook.Models.Movie", b =>
                 {
                     b.Navigation("Seats");
@@ -427,6 +536,8 @@ namespace CineBook.Migrations
 
             modelBuilder.Entity("CineBook.Models.User", b =>
                 {
+                    b.Navigation("Messages");
+
                     b.Navigation("booking");
                 });
 #pragma warning restore 612, 618

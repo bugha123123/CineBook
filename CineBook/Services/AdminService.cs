@@ -15,12 +15,14 @@ namespace CineBook.Services
         private readonly IAuthService _AuthService;
         private readonly UserManager<User> _UserManager;
         private readonly IEmailService _emailService;
-        public AdminService(AppDbContextion dBContext, IAuthService authService, UserManager<User> userManager, IEmailService emailService)
+        private readonly IChatService _chatService;
+        public AdminService(AppDbContextion dBContext, IAuthService authService, UserManager<User> userManager, IEmailService emailService, IChatService chatService)
         {
             _DBContext = dBContext;
             _AuthService = authService;
             _UserManager = userManager;
             _emailService = emailService;
+            _chatService = chatService;
         }
 
         public async Task<int> GetTotalRevenue()
@@ -331,10 +333,38 @@ namespace CineBook.Services
         }
 
 
-        //TODO
-        public Task UpdateChatStatus(string ChatId)
+        public async Task UpdateChatStatus(string ChatId, Chat.ChatStatus Status)
         {
-            throw new NotImplementedException();
+            var FoundChat = await _chatService.GetChatById(ChatId);
+
+            if (FoundChat is null)
+                return;
+
+            FoundChat.Status = Status;
+            await _DBContext.SaveChangesAsync();
         }
+
+        public async Task<List<Chat>> GetAllChats()
+        {
+            var chats = await _DBContext.Chats
+                .Include(chat => chat.Messages.Where(message => message.AgentAnswered == false))
+                .ToListAsync();
+
+            return chats;
+        }
+
+        public async Task JoinChat(string ChatId)
+        {
+            var FoundChat = await _chatService.GetChatById(ChatId);
+            if (FoundChat is null)
+                return;
+
+
+            FoundChat.Status = Chat.ChatStatus.Open;
+
+            await _DBContext.SaveChangesAsync();
+        }
+
+    
     }
 }

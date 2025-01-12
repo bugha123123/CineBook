@@ -93,6 +93,9 @@ namespace CineBook.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("AgentAnswered")
+                        .HasColumnType("bit");
+
                     b.Property<string>("ChatId")
                         .HasColumnType("nvarchar(450)");
 
@@ -100,20 +103,21 @@ namespace CineBook.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SenderId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SenderName")
-                        .IsRequired()
+                    b.Property<string>("Role")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("SentAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ChatId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Messages");
                 });
@@ -436,6 +440,14 @@ namespace CineBook.Migrations
                     b.HasOne("CineBook.Models.Chat", null)
                         .WithMany("Messages")
                         .HasForeignKey("ChatId");
+
+                    b.HasOne("CineBook.Models.User", "User")
+                        .WithMany("Messages")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -521,6 +533,8 @@ namespace CineBook.Migrations
 
             modelBuilder.Entity("CineBook.Models.User", b =>
                 {
+                    b.Navigation("Messages");
+
                     b.Navigation("booking");
                 });
 #pragma warning restore 612, 618

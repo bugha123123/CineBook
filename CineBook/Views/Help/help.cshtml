@@ -1,4 +1,7 @@
-﻿<div class="container mx-auto px-4 py-8">
+﻿@using CineBook.Interface
+@inject IChatService _chatService;
+
+<div class="container mx-auto px-4 py-8">
     <h1 class="text-3xl font-bold mb-6">Support Center</h1>
 
     <!-- FAQ Categories -->
@@ -80,38 +83,35 @@
                 <!-- Messages will be dynamically added here -->
             </div>
 
-      
-        </div>
 
+        </div>
+        @{
+            var HistoryOfChat = await _chatService.GetHistoryOfChat();
+            var TotalRequests = HistoryOfChat.Count();
+
+        }
         <!-- Sidebar -->
         <div class="w-80 flex flex-col">
             <div class="p-4 border-b border-gray-700">
-                <h3 class="font-semibold text-white">My requests (3)</h3>
+                <h3 class="font-semibold text-white">My requests (@TotalRequests)</h3>
                 <p class="text-sm text-gray-400 mt-2">Please check your contact email inbox for request details.</p>
             </div>
             <div class="flex-1 overflow-y-auto">
                 <div class="p-4 space-y-4">
-                    <div class="border border-gray-700 rounded p-3 hover:bg-gray-800 cursor-pointer">
-                        <div class="flex justify-between items-center text-sm">
-                            <span class="text-gray-400">JUL 31, 2024</span>
-                            <span class="px-2 py-1 text-xs bg-gray-700 rounded text-white">CLOSED</span>
-                        </div>
-                        <p class="mt-2 font-medium text-white">#11959197: Chat with Support</p>
-                    </div>
-                    <div class="border border-gray-700 rounded p-3 hover:bg-gray-800 cursor-pointer">
-                        <div class="flex justify-between items-center text-sm">
-                            <span class="text-gray-400">JAN 21, 2024</span>
-                            <span class="px-2 py-1 text-xs bg-gray-700 rounded text-white">CLOSED</span>
-                        </div>
-                        <p class="mt-2 font-medium text-white">#10224027: Booking Issue</p>
-                    </div>
-                    <div class="border border-gray-700 rounded p-3 hover:bg-gray-800 cursor-pointer">
-                        <div class="flex justify-between items-center text-sm">
-                            <span class="text-gray-400">DEC 16, 2023</span>
-                            <span class="px-2 py-1 text-xs bg-gray-700 rounded text-white">CLOSED</span>
-                        </div>
-                        <p class="mt-2 font-medium text-white">#08001748: Payment Problem</p>
-                    </div>
+                    @foreach (var item in await _chatService.GetHistoryOfChat())
+                    {
+                    <a asp-action="compactchat" asp-controller="Help" asp-route-ChatId="@item.ChatId" asp-route-Role="User">
+                            <div class="border border-gray-700 rounded p-3 hover:bg-gray-800 cursor-pointer">
+                                <div class="flex justify-between items-center text-sm">
+                                    <span class="text-gray-400">@item.CreatedAt</span>
+                                    <span class="px-2 py-1 text-xs bg-gray-700 rounded text-white">@item.Status</span>
+                                </div>
+                                <p class="mt-2 font-medium text-white">@item.ChatId: @item.Topic</p>
+                            </div>
+                    </a>
+                    }
+                  
+               
                 </div>
             </div>
             <div class="p-4 border-t border-gray-700">

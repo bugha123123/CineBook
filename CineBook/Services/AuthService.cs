@@ -58,7 +58,7 @@ namespace CineBook.Services
             if (result.Succeeded)
             {
                 // you can change the role here to add admin User to DB.
-                await _userManager.AddToRoleAsync(user, "USER");
+                await _userManager.AddToRoleAsync(user, "ADMIN");
                 await _signInManager.SignInAsync(user, isPersistent: false);
                 await SendWelcomeEmailToUser(registerViewModel.Email);
 

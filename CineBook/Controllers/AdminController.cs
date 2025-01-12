@@ -37,7 +37,7 @@ namespace CineBook.Controllers
 
             return View();
         }
-        [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ManageBookings()
         {
             var  TotalBookings = await _adminService.GetAllBookings();
@@ -45,7 +45,7 @@ namespace CineBook.Controllers
             return View(TotalBookings);
         }
 
-        [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GenerateReport(int? dateRange)
         {
 
@@ -177,7 +177,23 @@ namespace CineBook.Controllers
             return View();
         }
 
-
-
+        public async Task<IActionResult> Admin_ChangeStatusOfChat(string ChatId, Chat.ChatStatus status)
+        {
+            if (ModelState.IsValid)
+            {
+                await _adminService.UpdateChatStatus(ChatId, status);
+                return RedirectToAction("MainAdminPage", "Admin");
+            }
+            return View();
+        }
+        public async Task<IActionResult> Admin_JoinChatAndChangeStatus(string ChatId)
+        {
+            if (ModelState.IsValid)
+            {
+                await _adminService.JoinChat(ChatId);
+                return RedirectToAction("compactchat", "Help", new {ChatId, Role = "Admin"});
+            }
+            return View();
+        }
     }
 }
