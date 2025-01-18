@@ -72,5 +72,8 @@ namespace CineBook.Controllers
                 return StatusCode(500, $"Internal server error. Please try again.{ex}");
             }
         }
+
+
+
     }
 }

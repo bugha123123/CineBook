@@ -22,8 +22,7 @@ namespace CineBook.Models
         public ChatStatus Status { get; set; }
         public string Topic { get; set; } 
 
-        public List<Message> Messages { get; set; } // Collection of messages in the chat
-
+        public List<Message>? Messages { get; set; } // Collection of messages in the chat
         public Chat()
         {
             ChatId = GenerateChatId();

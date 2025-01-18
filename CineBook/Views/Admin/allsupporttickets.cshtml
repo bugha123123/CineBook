@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Support Tickets</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+</head>
+<body class="bg-gray-100">
+  
+        <h1 class="text-3xl font-bold mb-6">All Support Tickets</h1>
+
+        <div class="bg-white shadow-md rounded-lg overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="bg-gray-50">
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" >
+                                ID
+                                <span x-show="sortKey === 'id'" class="ml-1">
+                                    <span x-show="sortAsc">▲</span>
+                                    <span x-show="!sortAsc">▼</span>
+                                </span>
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" >
+                                Subject
+                                <span x-show="sortKey === 'subject'" class="ml-1">
+                                    <span x-show="sortAsc">▲</span>
+                                    <span x-show="!sortAsc">▼</span>
+                                </span>
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" >
+                                Customer
+                                <span x-show="sortKey === 'customer'" class="ml-1">
+                                    <span x-show="sortAsc">▲</span>
+                                    <span x-show="!sortAsc">▼</span>
+                                </span>
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer">
+                                Status
+                                <span x-show="sortKey === 'status'" class="ml-1">
+                                    <span x-show="sortAsc">▲</span>
+                                    <span x-show="!sortAsc">▼</span>
+                                </span>
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" >
+                                Created
+                                <span x-show="sortKey === 'created'" class="ml-1">
+                                    <span x-show="sortAsc">▲</span>
+                                    <span x-show="!sortAsc">▼</span>
+                                </span>
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <template x-for="ticket in tickets" :key="ticket.id">
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900" x-text="'#' + ticket.id"></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" x-text="ticket.subject"></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" x-text="ticket.customer"></td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+                                          :class="{
+                                              'bg-yellow-100 text-yellow-800': ticket.status === 'In Progress',
+                                              'bg-red-100 text-red-800': ticket.status === 'Urgent',
+                                              'bg-green-100 text-green-800': ticket.status === 'New'
+                                          }"
+                                          x-text="ticket.status"></span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" x-text="ticket.created"></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <a href="#" class="text-indigo-600 hover:text-indigo-900 mr-3">View</a>
+                                    <a href="#" class="text-green-600 hover:text-green-900">Resolve</a>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="mt-6">
+            <a href="#" class="text-indigo-600 hover:text-indigo-900">← Back to Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -11,11 +11,12 @@ namespace CineBook.Controllers
     {
         private readonly IAdminService _adminService;
         private readonly UserManager<User> _userManager;
-
-        public AdminController(IAdminService adminService, UserManager<User> userManager)
+        private readonly IChatService _chatService;
+        public AdminController(IAdminService adminService, UserManager<User> userManager, IChatService chatService)
         {
             _adminService = adminService;
             _userManager = userManager;
+            _chatService = chatService;
         }
         [Authorize(Roles ="Admin")]
         public async Task<IActionResult> MainAdminPage()
@@ -31,6 +32,18 @@ namespace CineBook.Controllers
 
             return View();
         }
+
+        public async Task<IActionResult> SupportTicketsDetails(string TicketId)
+        {
+            var FoundTicket = await _adminService.GetSupportTicketById(TicketId);
+            return View(FoundTicket);
+        }
+        public async Task<IActionResult> allsupporttickets()
+        {
+
+            return View();
+        }
+
 
         public async Task<IActionResult> FailedVerificationError()
         {
@@ -195,5 +208,19 @@ namespace CineBook.Controllers
             }
             return View();
         }
+
+        public async Task<IActionResult> Admin_SendChatMessage(string Comment, string TicketId)
+        {
+            if (ModelState.IsValid)
+            {
+                // Add the comment using your service
+                await _adminService.AddComment(Comment, TicketId);
+
+                // Redirect to the same ticket details page with the same TicketId
+                return RedirectToAction("SupportTicketsDetails", "Admin", new { TicketId = TicketId });
+            }
+            return View();
+        }
+
     }
 }

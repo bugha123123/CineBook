@@ -38,7 +38,16 @@ namespace CineBook.Interface
 
         Task JoinChat(string ChatId);
 
+        Task<List<SupportTicket>> GetSupportTickets();
 
+        Task<SupportTicket> GetSupportTicketById(string SupportTicketId);
+
+
+        // used on a "SupportTicketsDetails" page to help user resolve the issue
+        Task AddComment(string Comment,string TicketId);
+
+
+        Task<List<Message>> GetSupportTicketMessages(string TicketId);
 
 
     }

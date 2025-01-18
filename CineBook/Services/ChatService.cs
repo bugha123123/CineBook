@@ -59,7 +59,7 @@ namespace CineBook.Services
                 return new List<Chat>();
 
             var History = await _dbcontext.Chats
-                .Where(chat => chat.UserId == LoggedInUser.Id) 
+                .Where(chat => chat.UserId == LoggedInUser.Id ) 
                 .Include(chat => chat.Messages) 
                 .ToListAsync();
 
@@ -76,6 +76,7 @@ namespace CineBook.Services
             var chat = await _dbcontext.Chats
                 .Include(chat => chat.Messages)
                 .Include(x => x.User)
+                .Where(x => x.Messages.Any(x => x.ConversationType == ConversationType.LiveChat))
                 .FirstOrDefaultAsync(chat => chat.ChatId == ChatId);
 
             // If no chat is found, return an empty list of messages
@@ -115,7 +116,8 @@ namespace CineBook.Services
                 User = LoggedInUser,
                 UserId = LoggedInUser.Id,
                 SentAt = DateTime.Now,
-                Role =  "Admin" 
+                Role =  "Admin" ,
+                ConversationType = ConversationType.LiveChat
             };
 
             // If the logged-in user is an admin, assign the message with AgentId
@@ -126,7 +128,7 @@ namespace CineBook.Services
             }
             else
             {
-                // For non-admins, the AgentId can be null, or you can implement logic for assigning it
+               
                 MessageToSend.Role = "User";
                 Chat.Messages.Add(MessageToSend);
             }

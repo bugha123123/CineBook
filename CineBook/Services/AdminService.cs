@@ -365,6 +365,84 @@ namespace CineBook.Services
             await _DBContext.SaveChangesAsync();
         }
 
-    
+        public async Task<List<SupportTicket>> GetSupportTickets()
+        {
+            var SupporTickets = await _DBContext.SupportTickets.Include(x => x.User).ToListAsync();
+
+            return SupporTickets;   
+        }
+
+        public async Task<SupportTicket> GetSupportTicketById(string SupportTicketId)
+        {
+            return await _DBContext.SupportTickets.Include(x => x.User).FirstOrDefaultAsync(x => x.TicketId == SupportTicketId);
+        }
+
+        public async Task AddComment(string Comment, string TicketId)
+        {
+            var LoggedInUser = await _AuthService.GetLoggedInUserAsync();
+
+            if (LoggedInUser is null)
+                return;
+
+            // Check if the logged-in user is an admin
+            bool isAdmin = await _UserManager.IsInRoleAsync(LoggedInUser, "Admin");
+
+            
+
+         
+
+            // Create the message first (outside of the loop)
+            Message MessageToSend = new Message()
+            {
+                Content = Comment,
+                User = LoggedInUser,
+                UserId = LoggedInUser.Id,
+                SentAt = DateTime.Now,
+                Role = "Admin",
+                ConversationType = ConversationType.SupportTicket,
+                AgentAnswered = false,
+               TicketId = TicketId
+               
+            };
+            // If the logged-in user is an admin, assign the message with AgentId
+            if (isAdmin)
+            {
+
+                await _DBContext.Messages.AddAsync(MessageToSend);
+            }
+            else
+            {
+
+                MessageToSend.Role = "User";
+                await _DBContext.Messages.AddAsync(MessageToSend);
+            }
+
+
+            await _DBContext.SaveChangesAsync();
+        }
+
+        public async Task<List<Message>> GetSupportTicketMessages(string TicketId)
+        {
+            // Check if the user is logged in
+            var LoggedInUser = await _AuthService.GetLoggedInUserAsync();
+
+            if (LoggedInUser == null)
+            {
+                // Return an empty list if no user is logged in
+                return new List<Message>();
+            }
+
+            // Fetch all messages for the specific ticket, ordered by SentAt
+            var TicketMessages = await _DBContext.Messages
+                .Include(x => x.User) // Ensure the User info is included with each message
+                .Where(x => x.ConversationType == ConversationType.SupportTicket && x.TicketId == TicketId) // Filter by TicketId
+                .OrderBy(x => x.SentAt) // Sort messages by the time they were sent
+                .ToListAsync(); // Execute the query asynchronously
+
+            // Return the list of messages for the specific ticket
+            return TicketMessages;
+        }
+
+
     }
 }

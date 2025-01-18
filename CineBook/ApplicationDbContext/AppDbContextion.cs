@@ -22,6 +22,10 @@ namespace CineBook.ApplicationDbContext
 
         public DbSet<Message> Messages { get; set; }
 
+        public DbSet<SupportTicket> SupportTickets { get; set; }
+
+
+
         public static async Task SeedRolesAsync(IServiceProvider serviceProvider, RoleManager<IdentityRole> roleManager)
         {
             string[] roleNames = { "Admin", "User" };

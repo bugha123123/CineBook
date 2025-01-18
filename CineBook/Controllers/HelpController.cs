@@ -9,11 +9,12 @@ namespace CineBook.Controllers
     {
         private readonly IChatService _chatService;
         private readonly IAdminService _adminService;
-
-        public HelpController(IChatService chatService, IAdminService adminService)
+        private readonly ISupportService _supportService;
+        public HelpController(IChatService chatService, IAdminService adminService, ISupportService supportService)
         {
             _chatService = chatService;
             _adminService = adminService;
+            _supportService = supportService;
         }
 
         public IActionResult help()
@@ -58,7 +59,14 @@ namespace CineBook.Controllers
          
             return RedirectToAction("compactchat", "Help", new { ChatId, Role = "User" });
         }
+        public async Task<IActionResult> SubmitATicket(string subject, string email, string Category, string message)
+        {
 
-    
+            await _supportService.SubmitSupportTicket(subject, email, Category, message);
+
+
+            return RedirectToAction("Index", "Home");
+        }
+
     }
 }

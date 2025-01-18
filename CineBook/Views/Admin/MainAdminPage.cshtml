@@ -20,29 +20,29 @@
         document.getElementById(section).style.display = 'block';
         }
 
-                function showUserSections(sectionId) {
-            // Hide all sections
-            const sections = document.querySelectorAll("#userManagement > div[id$='Section']");
-            sections.forEach(section => section.classList.add("hidden"));
+        function showUserSections(sectionId) {
+        // Hide all sections
+        const sections = document.querySelectorAll("#userManagement > div[id$='Section']");
+        sections.forEach(section => section.classList.add("hidden"));
 
-            // Show the selected section
-            const selectedSection = document.getElementById(sectionId);
-            if (selectedSection) {
-                selectedSection.classList.remove("hidden");
-            }
+        // Show the selected section
+        const selectedSection = document.getElementById(sectionId);
+        if (selectedSection) {
+        selectedSection.classList.remove("hidden");
         }
-           
+        }
 
 
-       
-     
+
+
+
     </script>
 
 
 </head>
 
 <body>
-    
+
     <div id="popupModal" class="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-50 z-50 hidden">
         <div class="bg-white p-6 rounded-lg w-1/3">
             <h2 class="text-xl font-semibold mb-4">Verification Status</h2>
@@ -83,16 +83,17 @@
                             Ticket Management
                         </a>
                     </li>
-                  @*   <li class="mb-4">
-                        <a href="javascript:void(0);" onclick="showSection('reviews')" class="flex items-center text-gray-300 hover:text-white">
-                            <i class="fas fa-star mr-3"></i>
-                            Reviews and Feedback
-                        </a>
-                    </li> *@
+
                     <li class="mb-4">
                         <a href="javascript:void(0);" onclick="showSection('chatManagement')" class="flex items-center text-gray-300 hover:text-white">
                             <i class="fas fa-chart-line mr-3"></i>
                             Chat Management
+                        </a>
+                    </li>
+                    <li class="mb-4">
+                        <a href="javascript:void(0);" onclick="showSection('SupportTicketManagement')" class="flex items-center text-gray-300 hover:text-white">
+                            <i class="fas fa-star mr-3"></i>
+                            Support Management
                         </a>
                     </li>
                 </ul>
@@ -221,20 +222,20 @@
                 <!-- Verification Email Section -->
                 <div id="verificationEmailSection" class="hidden bg-white shadow-md rounded px-8 pt-6 pb-8">
                     <h2 class="text-xl font-semibold mb-4">Send Verification Email</h2>
-                <form asp-action="SendVerificationEmailToUser" asp-controller="Admin" method="post">
-    <div class="mb-4">
-        <label class="block text-gray-700 text-sm font-bold mb-2" for="emailSelectVerification">Select User Email</label>
-        <select class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="emailSelectVerification" name="UserGmail" required>
-            <option value="" disabled selected>Select an email</option>
-            @foreach (var item in TotalUsers)
-            {
-                <option value="@item.Email" >@item.Email</option>
-            }
-        </select>
-    </div>
+                    <form asp-action="SendVerificationEmailToUser" asp-controller="Admin" method="post">
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="emailSelectVerification">Select User Email</label>
+                            <select class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="emailSelectVerification" name="UserGmail" required>
+                                <option value="" disabled selected>Select an email</option>
+                                @foreach (var item in TotalUsers)
+                                {
+                                    <option value="@item.Email" >@item.Email</option>
+                                }
+                            </select>
+                        </div>
 
-    <button type="submit" class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">Send Verification Email</button>
-</form>
+                        <button type="submit" class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">Send Verification Email</button>
+                    </form>
 
 
                 </div>
@@ -301,48 +302,15 @@
                     </div>
                 </section>
 
-                <!-- Upcoming Events -->
-                <section>
-                    <h2 class="text-2xl font-bold mb-4">Upcoming Events</h2>
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                        <table class="w-full">
-                            <thead class="bg-gray-100">
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Event Name</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Available Seats</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-200">
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap">Hamlet</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">2023-05-15</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">19:30</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">42</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <a href="#" class="text-indigo-600 hover:text-indigo-900">Edit</a>
-                                    </td>
-                                </tr>
 
-                            </tbody>
-                        </table>
-                    </div>
-                </section>
 
             </div>
 
-      @*       <!-- Reviews Section -->
-            <div id="reviews" class="section" style="display: none;">
-                <h3>Reviews and Feedback </h3>
-                <!-- Your content here -->
-            </div> *@
 
             @{
                 var AllChats = await _AdminService.GetAllChats();
             }
-          @*   TODO *@
+
             <!-- Revenue Management Section -->
             <div id="chatManagement" class="section" style="display: none;">
                 <div class="bg-white shadow-md rounded-lg overflow-hidden">
@@ -356,7 +324,7 @@
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                             </tr>
                         </thead>
-                     
+
                         <tbody class="bg-white divide-y divide-gray-200">
                             @foreach (var item in AllChats)
                             {
@@ -391,7 +359,7 @@
                                                 }
                                             }
                                             <button class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full @bgColorClass @textColorClass"
-                                                    onclick="toggleDropdown('dropdown-@item.ChatId')">
+                                            onclick="toggleDropdown('dropdown-@item.ChatId')">
                                                 @item.Status
                                             </button>
 
@@ -405,7 +373,7 @@
                                                             <input type="hidden" name="ChatId" value="@item.ChatId" />
                                                             <input type="hidden" name="status" value="@status" />
                                                             <button type="submit"
-                                                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">
+                                                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">
                                                                 @status
                                                             </button>
                                                         </form>
@@ -433,16 +401,94 @@
 
                                                 </button>
                                             </form>
-                                           
+
                                         }
                                     </td>
                                 </tr>
                             }
                         </tbody>
 
-                   
+
                     </table>
                 </div>
+            </div>
+
+
+            @{
+                var SupportTickets = await _AdminService.GetSupportTickets();
+            }
+            <div id="SupportTicketManagement" class="section" style="display:none">
+                <div class="container mx-auto px-4 py-8">
+                    <h1 class="text-3xl font-bold mb-6">Support Tickets Management</h1>
+
+                    <div class="bg-white shadow-md rounded-lg overflow-hidden">
+                        <div class="p-4 border-b bg-gray-50">
+                            <h2 class="text-xl font-semibold">Active Tickets</h2>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="bg-gray-100">
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subject</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                 
+                             @foreach (var supportTicket in SupportTickets.Take(3))
+                                    {
+                                        <tr>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">@supportTicket.TicketId</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">@supportTicket.Subject</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">@supportTicket.User.UserName.Substring(0,7)</td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                                    @supportTicket.Status
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2023-04-15</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                <a  class="text-indigo-600 hover:text-indigo-900 mr-3" asp-action="SupportTicketsDetails" asp-controller="Admin" asp-route-TicketId="@supportTicket.TicketId">View</a>
+                                                <a href="#" class="text-green-600 hover:text-green-900">Resolve</a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-3 border-t border-gray-200 sm:px-6">
+                            <div class="flex items-center justify-between">
+                                <div class="flex-1 flex justify-between sm:hidden">
+                                    <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                        Previous
+                                    </a>
+                                    <a href="#" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                        Next
+                                    </a>
+                                </div>
+                                <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-700">
+                                            Showing <span class="font-medium">1</span> to <span class="font-medium">3</span> of <span class="font-medium">@SupportTickets.Count()</span> results
+                                        </p>
+                                    </div>
+                                    <div class="flex items-center space-x-4">
+                                        <!-- See More Button -->
+                                        <a asp-action="allsupporttickets" asp-controller="Admin"
+                                           class="inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                                            See More
+                                        </a>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                 </div>
             </div>
 
         </main>
