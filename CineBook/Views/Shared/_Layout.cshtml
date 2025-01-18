@@ -9,8 +9,24 @@
     <link rel="stylesheet" href="~/CineBook.styles.css" asp-append-version="true" />
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
+<style>
+    .dropdown-toggle::after {
+        display: none !important;
+    }
+
+    .dropdown-menu .dropdown-item:hover {
+        background-color: #444;
+        cursor: pointer;
+    }
+
+    .dropdown-menu .dropdown-item {
+        color: white;
+        font-size: 14px;
+        font-weight: 500;
+    }
+</style>
 <body class="bg-purple-100 text-gray-800 ">
-    <header class="bg-background shadow-lg">
+    <header class="bg-gray-900 shadow-lg">
         <nav class="container mx-auto px-4 py-4 flex justify-between items-center">
             <div class="flex items-center">
                 <a class="text-primary font-bold text-3xl" style="text-decoration:none;" asp-action="Index" asp-controller="Home">CineBook</a>
@@ -25,13 +41,29 @@
             </label>
 
             <div class="hidden md:flex items-center space-x-6">
-                <a class="text-black hover:text-accent transition duration-300" style="text-decoration:none;" asp-action="help" asp-controller="Help">Support</a>
-                <a  class="text-black hover:text-accent transition duration-300" style="text-decoration:none;" asp-action="ComingNow" asp-controller="Ticket">Now Showing</a>
-                <a  class="text-black hover:text-accent transition duration-300" style="text-decoration:none;" asp-action="ComingSoon" asp-controller="Ticket">Coming Soon</a>
-                <a  class="text-black hover:text-accent transition duration-300" style="text-decoration:none;" asp-action="BookingHistory" asp-controller="Ticket">History</a>
+                <!-- Custom Styled Dropdown -->
+                <div class="dropdown">
+                    <button class="btn btn-link text-white dropdown-toggle text-decoration-none" type="button" id="helpDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="border: none; background: none; padding: 0;">
+                        Help
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="helpDropdown" style="min-width: 200px; border-radius: 8px; background-color: #333; border: none; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+                        <li>
+                            <a class="dropdown-item" asp-action="Help" asp-controller="Help" style="color: white; padding: 10px 15px; transition: background-color 0.3s;">Live Support</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" asp-action="submitticket" asp-controller="Help" style="color: white; padding: 10px 15px; transition: background-color 0.3s;">Leave a Review</a>
+                        </li>
+                    </ul>
+                </div>
+
+     
+
+                <a class="text-white hover:text-accent transition duration-300" style="text-decoration:none;" asp-action="ComingNow" asp-controller="Ticket">Now Showing</a>
+                <a class="text-white hover:text-accent transition duration-300" style="text-decoration:none;" asp-action="ComingSoon" asp-controller="Ticket">Coming Soon</a>
+                <a class="text-white hover:text-accent transition duration-300" style="text-decoration:none;" asp-action="BookingHistory" asp-controller="Ticket">History</a>
                 @if (User.IsInRole("Admin"))
                 {
-                <a class="text-black hover:text-accent transition duration-300" style="text-decoration:none;" asp-action="MainAdminPage" asp-controller="Admin">Admin Dashboard</a>
+                    <a class="text-white hover:text-accent transition duration-300" style="text-decoration:none;" asp-action="MainAdminPage" asp-controller="Admin">Admin Dashboard</a>
                 }
                 @if (!User.Identity.IsAuthenticated)
                 {
@@ -45,6 +77,7 @@
                 }
             </div>
         </nav>
+
 
         <!-- Mobile Menu -->
         <div class="md:hidden peer-checked:block hidden bg-background w-full px-4 py-2">
@@ -65,12 +98,15 @@
         </div>
     </header>
 
-    <div class="container mt-5">
+
+
+    <div class=" ">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
     @await RenderSectionAsync("Scripts", required: false)
+ 
 </body>
 </html>

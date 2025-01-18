@@ -35,6 +35,7 @@ builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IChatService, ChatService>();
+builder.Services.AddScoped<ISupportService, SupportService>();
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<DatabaseSeeder>();
 
