@@ -423,23 +423,21 @@ namespace CineBook.Services
 
         public async Task<List<Message>> GetSupportTicketMessages(string TicketId)
         {
-            // Check if the user is logged in
             var LoggedInUser = await _AuthService.GetLoggedInUserAsync();
 
             if (LoggedInUser == null)
             {
-                // Return an empty list if no user is logged in
+            
                 return new List<Message>();
             }
 
-            // Fetch all messages for the specific ticket, ordered by SentAt
+        
             var TicketMessages = await _DBContext.Messages
-                .Include(x => x.User) // Ensure the User info is included with each message
-                .Where(x => x.ConversationType == ConversationType.SupportTicket && x.TicketId == TicketId) // Filter by TicketId
-                .OrderBy(x => x.SentAt) // Sort messages by the time they were sent
-                .ToListAsync(); // Execute the query asynchronously
+                .Include(x => x.User) 
+                .Where(x => x.ConversationType == ConversationType.SupportTicket && x.TicketId == TicketId) 
+                .OrderBy(x => x.SentAt)
+                .ToListAsync(); 
 
-            // Return the list of messages for the specific ticket
             return TicketMessages;
         }
 

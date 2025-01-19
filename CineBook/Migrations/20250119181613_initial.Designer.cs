@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CineBook.Migrations
 {
     [DbContext(typeof(AppDbContextion))]
-    [Migration("20250118212830_ashdaw")]
-    partial class ashdaw
+    [Migration("20250119181613_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -179,7 +179,6 @@ namespace CineBook.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Category")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")

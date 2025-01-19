@@ -15,6 +15,8 @@ namespace CineBook.Interface
 
         Task<List<Chat>> GetHistoryOfChat();
 
+
+        Task<List<SupportTicket>> GetSupportTicketMessagesForUser();
         
     }
 }

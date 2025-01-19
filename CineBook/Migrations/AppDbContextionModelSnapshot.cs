@@ -112,10 +112,6 @@ namespace CineBook.Migrations
                     b.Property<DateTime>("SentAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("SupportTicketTicketId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("TicketId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -127,8 +123,6 @@ namespace CineBook.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ChatId");
-
-                    b.HasIndex("SupportTicketTicketId");
 
                     b.HasIndex("UserId");
 
@@ -182,7 +176,6 @@ namespace CineBook.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Category")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
@@ -494,19 +487,11 @@ namespace CineBook.Migrations
                         .WithMany("Messages")
                         .HasForeignKey("ChatId");
 
-                    b.HasOne("CineBook.Models.SupportTicket", "SupportTicket")
-                        .WithMany()
-                        .HasForeignKey("SupportTicketTicketId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("CineBook.Models.User", "User")
                         .WithMany("Messages")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("SupportTicket");
 
                     b.Navigation("User");
                 });

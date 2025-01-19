@@ -88,6 +88,16 @@ namespace CineBook.Services
             return chat.Messages;
         }
 
+        public async Task<List<SupportTicket>> GetSupportTicketMessagesForUser()
+        {
+            var LoggedInUser = await _authService.GetLoggedInUserAsync();
+
+            if (LoggedInUser is null)
+                return new List<SupportTicket>();
+
+            return await _dbcontext.SupportTickets.Where(x => x.User.Id == LoggedInUser.Id).ToListAsync();
+
+        }
 
         public async Task SendChatMessage(string Content, string ChatId)
         {
