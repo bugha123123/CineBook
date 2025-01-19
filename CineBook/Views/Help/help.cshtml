@@ -71,7 +71,9 @@
                 @foreach (var item in await _chatService.GetSupportTicketMessagesForUser())
                 { 
                     <tr>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">@item.TicketId</td>
+
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"> <a asp-action="SupportTicketsDetails" asp-controller="Admin" asp-route-TicketId="@item.TicketId">@item.TicketId</a></td>
+               
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">@item.Subject</td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">@item.Status</span>
