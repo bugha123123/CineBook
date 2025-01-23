@@ -34,7 +34,7 @@ namespace CineBook.Models
         // Status of the ticket: e.g., "Pending", "In Progress", "Resolved",  etc
         public TicketStatus Status { get; set; } = SupportTicket.TicketStatus.Pending;
 
-
+        public bool AgentAnswered { get; set; } = false;
 
 
 

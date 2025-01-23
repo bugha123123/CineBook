@@ -43,11 +43,15 @@ namespace CineBook.Interface
         Task<SupportTicket> GetSupportTicketById(string SupportTicketId);
 
 
-        // used on a "SupportTicketsDetails" page to help user resolve the issue
-        Task AddComment(string Comment,string TicketId);
+        // used on a "SupportTicketsDetails" page to help user resolve the issue and   when admin adds a comment to a support ticket status of the ticket changes accordingly and user is able to write back
+        Task AddCommentChangeStatus(string Comment,string TicketId);
 
 
         Task<List<Message>> GetSupportTicketMessages(string TicketId);
+
+
+        
+        
 
 
     }

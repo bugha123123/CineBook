@@ -214,7 +214,7 @@ namespace CineBook.Controllers
             if (ModelState.IsValid)
             {
                 // Add the comment using your service
-                await _adminService.AddComment(Comment, TicketId);
+                await _adminService.AddCommentChangeStatus(Comment, TicketId);
 
                 // Redirect to the same ticket details page with the same TicketId
                 return RedirectToAction("SupportTicketsDetails", "Admin", new { TicketId = TicketId });

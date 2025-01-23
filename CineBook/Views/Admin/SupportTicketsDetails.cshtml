@@ -29,31 +29,11 @@
                     </span>
                 </div>
                 <h3 class="text-xl mb-2">@Model.Subject</h3>
-                <p class="text-gray-600">Reported by: @Model.User.UserName.Substring(0,7)</p>
+                <p class="text-gray-600">Reported by: @Model.User.UserName</p>
                 <p class="text-gray-600">Created: @Model.CreatedAt</p>
             </div>
 
        
-        @*     <div class="p-6 border-b">
-                <h3 class="text-lg font-semibold mb-4">Description</h3>
-                <p class="text-gray-700 mb-4">
-                    I've been trying to log into my account for the past two days, but it keeps saying my password is incorrect. I've tried resetting my password, but I'm not receiving the reset email. Please help me regain access to my account.
-                </p>
-                <h4 class="text-md font-semibold mb-2">Steps to Reproduce:</h4>
-                <ol class="list-decimal list-inside text-gray-700 mb-4">
-                    <li>Go to the login page</li>
-                    <li>Enter email: john.doe@example.com</li>
-                    <li>Enter password</li>
-                    <li>Click "Login"</li>
-                    <li>Receive "Incorrect password" error</li>
-                </ol>
-                <h4 class="text-md font-semibold mb-2">Additional Information:</h4>
-                <ul class="list-disc list-inside text-gray-700">
-                    <li>Browser: Chrome 112.0.5615.121</li>
-                    <li>Operating System: Windows 10</li>
-                    <li>Last successful login: 2023-04-13</li>
-                </ul>
-            </div> *@
           @*   TODO  Only admin should be able to start a supportTIcket chat conversation and when he does it should change the status accordingly *@
             <div class="p-6 border-b">
                 <h3 class="text-lg font-semibold mb-4">Activity Log</h3>
@@ -72,6 +52,7 @@
                                         <p class="mt-1 text-sm text-gray-700">@item.Content</p>
                                         <p class="mt-2 text-xs text-gray-500">@item.SentAt.ToString("yyyy-MM-dd HH:mm:ss")</p>
                                     </div>
+                                    
                                 </div>
                             }
 
@@ -93,16 +74,26 @@
                             <option>Resolved</option>
                             <option>Closed</option>
                         </select>
-                        <button type="submit" class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            Add Comment
-                        </button>
+                     
+                            @if (Model.AgentAnswered == true)
+                        {
+                            <button type="submit" class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                Add Comment
+                            </button>
+                        }  else{
+                                <button type="button" disabled class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    Add Comment
+                                </button>
+                        }
+                      
+                  
                     </div>
                 </form>
             </div>
         </div>
 
         <div class="mt-6">
-            <a href="#" class="text-indigo-600 hover:text-indigo-900">← Back to All Tickets</a>
+            <a  class="text-indigo-600 hover:text-indigo-900" asp-action="allsupportickets" asp-controller="Admin">← Back to All Tickets</a>
         </div>
     </div>
 </body>

@@ -377,7 +377,7 @@ namespace CineBook.Services
             return await _DBContext.SupportTickets.Include(x => x.User).FirstOrDefaultAsync(x => x.TicketId == SupportTicketId);
         }
 
-        public async Task AddComment(string Comment, string TicketId)
+        public async Task AddCommentChangeStatus(string Comment, string TicketId)
         {
             var LoggedInUser = await _AuthService.GetLoggedInUserAsync();
 
@@ -387,9 +387,9 @@ namespace CineBook.Services
             // Check if the logged-in user is an admin
             bool isAdmin = await _UserManager.IsInRoleAsync(LoggedInUser, "Admin");
 
-            
 
-         
+
+            var SupportTIcket = await _DBContext.SupportTickets.FirstOrDefaultAsync(x => x.TicketId == TicketId);
 
             // Create the message first (outside of the loop)
             Message MessageToSend = new Message()
@@ -402,12 +402,14 @@ namespace CineBook.Services
                 ConversationType = ConversationType.SupportTicket,
                 AgentAnswered = false,
                TicketId = TicketId
+            
                
             };
             // If the logged-in user is an admin, assign the message with AgentId
             if (isAdmin)
             {
-
+                SupportTIcket.AgentAnswered = true;
+                SupportTIcket.Status = SupportTicket.TicketStatus.InProgress;
                 await _DBContext.Messages.AddAsync(MessageToSend);
             }
             else
@@ -441,6 +443,6 @@ namespace CineBook.Services
             return TicketMessages;
         }
 
-
+    
     }
 }

@@ -59,7 +59,7 @@ namespace CineBook.Controllers
          
             return RedirectToAction("compactchat", "Help", new { ChatId, Role = "User" });
         }
-        public async Task<IActionResult> SubmitATicket(string subject, string email, string Category, string message)
+        public async Task<IActionResult> SubmitASupporticket(string subject, string email, string Category, string message)
         {
 
             await _supportService.SubmitSupportTicket(subject, email, Category, message);
