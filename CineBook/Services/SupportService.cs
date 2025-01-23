@@ -1,6 +1,7 @@
 ﻿using CineBook.ApplicationDbContext;
 using CineBook.Interface;
 using CineBook.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace CineBook.Services
 {
@@ -14,6 +15,11 @@ namespace CineBook.Services
         {
             _authService = authService;
             _dbContext = dbContext;
+        }
+
+        public async Task<SupportTicket> GetSupportTicketById(string ticketId)
+        {
+            return await _dbContext.SupportTickets.FirstOrDefaultAsync(x => x.TicketId == ticketId);
         }
 
         public async Task SubmitSupportTicket(string subject, string email, string category, string message)

@@ -23,5 +23,7 @@ namespace CineBook.Interface
         Task<List<Movie>> GetPopularMovies();
 
         Task<Movie> GetTopMovieByBookings();
+
+        Task<Booking> GetBookedMovieById(int BookingId);
     }
 }

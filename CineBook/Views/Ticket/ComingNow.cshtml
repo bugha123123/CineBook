@@ -2,17 +2,30 @@
 
 <main class="container mx-auto py-8">
     <h2 class="text-3xl font-bold text-center mb-8">Now Showing</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        @foreach (var item in Model)
-        {
-            <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                <img src="@item.MovieImage" alt="Movie 1 Poster" class="w-full h-64 object-cover">
-                <div class="p-4">
-                    <h3 class="font-bold text-xl mb-2">@item.Title</h3>
-                    <p class="text-gray-600">@item.ReleaseDate</p>
-                    <button class="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300">Notify Me</button>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            @foreach (var item in Model)
+            {
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <a asp-action="MovieDetails" asp-controller="Ticket" asp-route-MovieId="@item.Id">
+                        <img src="@item.MovieImage" alt="@item.Title Poster" class="w-full h-64 object-cover">
+                   </a>
+                    <div class="p-4">
+                        <h3 class="font-bold text-xl mb-2">@item.Title</h3>
+                        <p class="text-gray-600">@item.ReleaseDate</p>
+                        <br />
+                        <a class="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300" asp-action="MovieDetails" asp-controller="Ticket" asp-route-MovieId="@item.Id">See More</a>
+                    </div>
                 </div>
-            </div>
-        }
-    </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="text-center text-gray-500 text-lg">
+            <p>No movies are currently available.</p>
+        </div>
+    }
 </main>

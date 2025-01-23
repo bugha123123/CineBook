@@ -1,5 +1,8 @@
 ﻿using CineBook.DTO;
 using CineBook.Models;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.ComponentModel;
+using System.Net.Sockets;
 
 namespace CineBook.Interface
 {
@@ -43,15 +46,13 @@ namespace CineBook.Interface
         Task<SupportTicket> GetSupportTicketById(string SupportTicketId);
 
 
-        // used on a "SupportTicketsDetails" page to help user resolve the issue and   when admin adds a comment to a support ticket status of the ticket changes accordingly and user is able to write back
+        // used on a "SupportTicketsDetails" page to help user resolve the issue
         Task AddCommentChangeStatus(string Comment,string TicketId);
-
-
         Task<List<Message>> GetSupportTicketMessages(string TicketId);
 
 
         
-        
+        Task ResolveTicket(string TicketId);
 
 
     }

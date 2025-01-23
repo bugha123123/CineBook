@@ -222,5 +222,18 @@ namespace CineBook.Controllers
             return View();
         }
 
+        public async Task<IActionResult> Admin_ResolveSupportTicket(string TicketId)
+        {
+            if (ModelState.IsValid)
+            {
+                // Add the comment using your service
+                await _adminService.ResolveTicket(TicketId);
+
+                // Redirect to the same ticket details page with the same TicketId
+                return RedirectToAction("help", "Help", new { TicketId = TicketId });
+            }
+            return View();
+        }
+
     }
 }

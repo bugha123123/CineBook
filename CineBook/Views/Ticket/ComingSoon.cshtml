@@ -7,11 +7,14 @@
     @foreach (var item in Model)
         {
             <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                <img src="@item.MovieImage" alt="Movie 1 Poster" class="w-full h-64 object-cover">
+                <a asp-action="MovieDetails" asp-controller="Ticket" asp-route-MovieId="@item.Id">
+                    <img src="@item.MovieImage" alt="@item.Title Poster" class="w-full h-64 object-cover">
+                </a>
                 <div class="p-4">
                     <h3 class="font-bold text-xl mb-2">@item.Title</h3>
                     <p class="text-gray-600">@item.ReleaseDate</p>
-                    <button class="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300">Notify Me</button>
+                    <br />
+                    <a class="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300" asp-action="MovieDetails" asp-controller="Ticket" asp-route-MovieId="@item.Id">See More</a>
                 </div>
             </div>
         }

@@ -153,6 +153,11 @@ namespace CineBook.Services
             await _emailService.SendEmailAsync(loggedInUser.Email, "Your Ticket Booking Confirmation - CineBook", emailBody);
         }
 
+        public async Task<Booking> GetBookedMovieById(int BookingId)
+        {
+            return await _dbcontext.Bookings.Include(x => x.movie).Include(x => x.user).FirstOrDefaultAsync(x => x.Id == BookingId);
+        }
+
         public async Task<List<Booking>> GetBookingHistoryForUser()
         {
             var User = await _authService.GetLoggedInUserAsync();

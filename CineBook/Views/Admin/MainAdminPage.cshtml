@@ -452,8 +452,15 @@
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2023-04-15</td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                <a  class="text-indigo-600 hover:text-indigo-900 mr-3" asp-action="SupportTicketsDetails" asp-controller="Admin" asp-route-TicketId="@supportTicket.TicketId">View</a>
-                                                <a href="#" class="text-green-600 hover:text-green-900">Resolve</a>
+                                             
+                                                <a  class="text-indigo-600 hover:text-indigo-900 mr-3" asp-action="SupportTicketsDetails" asp-controller="Admin" asp-route-TicketId="@supportTicket.TicketId" asp-route-R="A">View</a>
+                                                <form asp-action="Admin_ResolveSupportTicket" asp-controller="Admin" method="post">
+                                                    <button type="submit">
+                                                        <a  class="text-green-600 hover:text-green-900 text-decoration-none">Resolve</a>
+                                                    </button>
+                                            
+                                                </form>
+                                         
                                             </td>
                                         </tr>
                                     }

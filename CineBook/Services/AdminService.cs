@@ -16,13 +16,15 @@ namespace CineBook.Services
         private readonly UserManager<User> _UserManager;
         private readonly IEmailService _emailService;
         private readonly IChatService _chatService;
-        public AdminService(AppDbContextion dBContext, IAuthService authService, UserManager<User> userManager, IEmailService emailService, IChatService chatService)
+        private readonly ISupportService _supportService;
+        public AdminService(AppDbContextion dBContext, IAuthService authService, UserManager<User> userManager, IEmailService emailService, IChatService chatService, ISupportService supportService)
         {
             _DBContext = dBContext;
             _AuthService = authService;
             _UserManager = userManager;
             _emailService = emailService;
             _chatService = chatService;
+            _supportService = supportService;
         }
 
         public async Task<int> GetTotalRevenue()
@@ -389,7 +391,7 @@ namespace CineBook.Services
 
 
 
-            var SupportTIcket = await _DBContext.SupportTickets.FirstOrDefaultAsync(x => x.TicketId == TicketId);
+         
 
             // Create the message first (outside of the loop)
             Message MessageToSend = new Message()
@@ -408,8 +410,7 @@ namespace CineBook.Services
             // If the logged-in user is an admin, assign the message with AgentId
             if (isAdmin)
             {
-                SupportTIcket.AgentAnswered = true;
-                SupportTIcket.Status = SupportTicket.TicketStatus.InProgress;
+               
                 await _DBContext.Messages.AddAsync(MessageToSend);
             }
             else
@@ -443,6 +444,15 @@ namespace CineBook.Services
             return TicketMessages;
         }
 
-    
+        public async Task ResolveTicket(string TicketId)
+        {
+            var SupportTicket = await _supportService.GetSupportTicketById(TicketId);
+
+            if (SupportTicket is null)
+                return;
+
+            SupportTicket.Status = SupportTicket.TicketStatus.Resolved;
+            SupportTicket.ClosedAt = DateTime.UtcNow;
+        }
     }
 }

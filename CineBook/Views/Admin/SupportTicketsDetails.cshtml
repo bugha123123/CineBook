@@ -3,10 +3,9 @@
 @inject IAdminService _adminService;
 @{
     var TicketIdFromUrl = Context.Request.Query["TicketId"];
-
     var CurrentTicketChat = await _adminService.GetSupportTicketById(TicketIdFromUrl);
-
     var Messages = await _adminService.GetSupportTicketMessages(TicketIdFromUrl);
+    var RoleValueFromUrl = Context.Request.Query["R"];
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -21,79 +20,75 @@
         <h1 class="text-3xl font-bold mb-6">Support Ticket Details</h1>
 
         <div class="bg-white shadow-md rounded-lg overflow-hidden">
-            <div class="p-6 border-b">
-                <div class="flex justify-between items-center mb-4">
+            <!-- Ticket Info & Resolve Button -->
+            <div class="p-6 border-b flex justify-between items-center">
+                <div>
                     <h2 class="text-2xl font-semibold">Ticket @Model.TicketId</h2>
+                    <br />
                     <span class="px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
                         @Model.Status
                     </span>
                 </div>
+
+                <!-- Resolve Ticket Button -->
+                <form asp-action="Admin_ResolveSupportTicket" asp-controller="Admin" method="post">
+                    <input type="hidden" name="TicketId" value="@Model.TicketId" />
+                    <button type="submit"
+                            class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg shadow-sm focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                        Resolve Ticket
+                    </button>
+                </form>
+            </div>
+
+            <!-- Ticket Details -->
+            <div class="p-6 border-b">
                 <h3 class="text-xl mb-2">@Model.Subject</h3>
                 <p class="text-gray-600">Reported by: @Model.User.UserName</p>
                 <p class="text-gray-600">Created: @Model.CreatedAt</p>
             </div>
 
-       
-          @*   TODO  Only admin should be able to start a supportTIcket chat conversation and when he does it should change the status accordingly *@
+            <!-- Activity Log -->
             <div class="p-6 border-b">
                 <h3 class="text-lg font-semibold mb-4">Activity Log</h3>
                 <div class="space-y-4">
-                   <div class="flex items-start">
-                    
-                        <div class="ml-3 flex-1">
-                            @foreach (var item in Messages)
-                            {
-                                <div class="flex items-start">
-                                    <div class="flex-shrink-0">
-                                        <img class="h-10 w-10 rounded-full" src="https://via.placeholder.com/40" alt="User Avatar">
-                                    </div>
-                                    <div class="ml-3 flex-1">
-                                        <p class="font-medium text-gray-900">@item.User.UserName</p>
-                                        <p class="mt-1 text-sm text-gray-700">@item.Content</p>
-                                        <p class="mt-2 text-xs text-gray-500">@item.SentAt.ToString("yyyy-MM-dd HH:mm:ss")</p>
-                                    </div>
-                                    
-                                </div>
-                            }
-
-                            <p class="mt-2 text-xs text-gray-500">@CurrentTicketChat.CreatedAt</p>
+                    @foreach (var item in Messages)
+                    {
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0">
+                                <img class="h-10 w-10 rounded-full" src="https://via.placeholder.com/40" alt="User Avatar">
+                            </div>
+                            <div class="ml-3 flex-1">
+                                <p class="font-medium text-gray-900">@item.User.UserName</p>
+                                <p class="mt-1 text-sm text-gray-700">@item.Content</p>
+                                <p class="mt-2 text-xs text-gray-500">@item.SentAt.ToString("yyyy-MM-dd HH:mm:ss")</p>
+                            </div>
                         </div>
-                    </div>
-                 
+                    }
                 </div>
             </div>
 
-            <div class="p-6">
-                <h3 class="text-lg font-semibold mb-4">Add Comment</h3>
+            <!-- Add Comment Section -->
+            <div class="p-6 bg-white shadow-md rounded-lg">
+                <h3 class="text-lg font-semibold mb-4 text-gray-900">Add Comment</h3>
                 <form asp-action="Admin_SendChatMessage" asp-controller="Admin" method="post">
-                    <input name="TicketId" value="@Model.TicketId" hidden />
-                    <textarea id="comment" name="Comment" rows="4" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md" placeholder="Type your comment here..."></textarea>
-                    <div class="mt-4 flex items-center justify-between">
-                        <select id="status"  class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-                            <option selected>In Progress</option>
-                            <option>Resolved</option>
-                            <option>Closed</option>
-                        </select>
-                     
-                            @if (Model.AgentAnswered == true)
-                        {
-                            <button type="submit" class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                Add Comment
-                            </button>
-                        }  else{
-                                <button type="button" disabled class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                    Add Comment
-                                </button>
-                        }
-                      
-                  
+                    <input name="TicketId" value="@Model.TicketId" type="hidden" />
+                    <textarea id="comment" name="Comment" rows="4"
+                              class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                              placeholder="Type your comment here..."></textarea>
+
+                    <div class="mt-4 flex justify-between items-center">
+                        <button type="submit"
+                                class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg shadow-sm focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Add Comment
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
 
+        <!-- Back to All Tickets -->
         <div class="mt-6">
-            <a  class="text-indigo-600 hover:text-indigo-900" asp-action="allsupportickets" asp-controller="Admin">← Back to All Tickets</a>
+            <a class="text-indigo-600 hover:text-indigo-900" asp-action="help" asp-controller="Help">← Back to All Tickets</a>
         </div>
     </div>
 </body>
