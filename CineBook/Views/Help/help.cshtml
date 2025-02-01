@@ -110,54 +110,78 @@
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
     </svg>
 </button>
+@{
+    var HistoryOfChat = await _chatService.GetHistoryOfChat();
+    var TotalHistoryRequests = HistoryOfChat.Count();
 
+}
 <!-- Full Chat Modal -->
 <div id="chatModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
     <div class="bg-gray-900 w-[1000px] h-[600px] rounded-lg shadow-xl flex overflow-hidden">
         <!-- Chat Area -->
         <div class="flex-1 flex flex-col border-r border-gray-700">
             <!-- Chat Header -->
-         
-
-            <!-- Chat Messages -->
-            <div id="chatMessages" class="flex-1 overflow-y-auto p-4 space-y-4">
-                <!-- Messages will be dynamically added here -->
+            <div class="p-4 bg-gray-800 border-b border-gray-700">
+                <h3 class="font-semibold text-white">Chat</h3>
             </div>
 
 
-        </div>
-        @{
-            var HistoryOfChat = await _chatService.GetHistoryOfChat();
-            var TotalHistoryRequests = HistoryOfChat.Count();
+            <!-- Chat Messages -->
+            <div id="chatMessages" class="flex-1 overflow-y-auto p-4 space-y-4">
+                @{
+                    var chatMessages = await _chatService.GetLastMessage();
+                }
 
-        }
-        <!-- Sidebar -->
+                @if (chatMessages != null && chatMessages.Any())
+                {
+                    <div class="space-y-2">
+                        <!-- Display ChatId above the messages, smaller text -->
+                        <div class="text-gray-500 text-sm text-info">
+                             @chatMessages.FirstOrDefault()?.ChatId
+                        </div>
+
+                        @foreach (var message in chatMessages)
+                        {
+                            <div class="border border-gray-700 rounded p-3 bg-gray-800">
+                                <p class="text-sm text-gray-300">@message.Content</p>
+                                <span class="block text-xs text-gray-500 mt-1">@message.SentAt</span>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p class="text-gray-400">No messages found in this chat.</p>
+                }
+
+
+            </div>
+        </div>
+
+        <!-- Sidebar (Right Panel) -->
         <div class="w-80 flex flex-col">
             <div class="p-4 border-b border-gray-700">
                 <h3 class="font-semibold text-white">My requests (@TotalHistoryRequests)</h3>
                 <p class="text-sm text-gray-400 mt-2">Please check your contact email inbox for request details.</p>
             </div>
             <div class="flex-1 overflow-y-auto">
-                <div class="p-4 space-y-4">
+                <div class="p-4 space-y-4 ">
                     @foreach (var item in await _chatService.GetHistoryOfChat())
                     {
-                    <a asp-action="compactchat" asp-controller="Help" asp-route-ChatId="@item.ChatId" asp-route-Role="User">
-                            <div class="border border-gray-700 rounded p-3 hover:bg-gray-800 cursor-pointer">
+                        <a asp-action="compactchat" asp-controller="Help" asp-route-ChatId="@item.ChatId" asp-route-Role="User">
+                            <div class="border border-gray-700 rounded p-3 hover:bg-gray-800 cursor-pointer mt-2">
                                 <div class="flex justify-between items-center text-sm">
                                     <span class="text-gray-400">@item.CreatedAt</span>
                                     <span class="px-2 py-1 text-xs bg-gray-700 rounded text-white">@item.Status</span>
                                 </div>
                                 <p class="mt-2 font-medium text-white">@item.ChatId: @item.Topic</p>
                             </div>
-                    </a>
+                        </a>
                     }
-                  
-               
                 </div>
             </div>
             <div class="p-4 border-t border-gray-700">
-                <form id="newRequestForm" asp-action="CreateChatAction" asp-controller="Help"   method="post">
-                    <!-- Dropdown for selecting topic -->
+                <form id="newRequestForm" asp-action="CreateChatAction" asp-controller="Help" method="post">
                     <div class="mb-4">
                         <label for="Topic" class="block text-white">Select Topic</label>
                         <select id="topic" name="Topic" class="w-full bg-gray-800 text-white border border-gray-700 rounded p-2">
@@ -165,17 +189,13 @@
                             <option value="support">Support</option>
                             <option value="payment">Payment Issues</option>
                             <option value="general">General Inquiry</option>
-                         
                         </select>
                     </div>
-
-                    <!-- Submit Button to create the new request -->
                     <button type="submit" class="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
                         CREATE NEW REQUEST
                     </button>
                 </form>
             </div>
-
         </div>
 
         <!-- Close Button -->
@@ -186,6 +206,7 @@
         </button>
     </div>
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
 

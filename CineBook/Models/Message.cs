@@ -24,7 +24,8 @@ namespace CineBook.Models
        
         public ConversationType ConversationType { get; set; }
 
-        
-        public string TicketId { get; set; }
+
+        public string? TicketId { get; set; } = null;
+        public string? ChatId { get; set; } = null;
     }
 }

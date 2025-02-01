@@ -17,6 +17,9 @@ namespace CineBook.Interface
 
 
         Task<List<SupportTicket>> GetSupportTicketMessagesForUser();
+
+        // gets the last message from chat 
+        Task<List<Message>> GetLastMessage();
         
     }
 }

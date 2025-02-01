@@ -211,8 +211,17 @@
                                 <option value="" disabled selected>Select an email</option>
                                 @foreach (var item in TotalUsers)
                                 {
-                                    <option value="@item.Email">@item.Email</option>
+                                    if (item.IsVerified)
+                                    {
+                                        <option value="@item.Email" >@item.Email</option>
+                                    }
+                                    else
+                                    {
+                                        <option disabled>@item.Email (Not Confirmed)</option>
+                                        <span style="color: red;">Please verify the user by sending the verification link.</span>
+                                    }
                                 }
+
                             </select>
                         </div>
                         <button type="submit" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">Send Password Reset</button>
@@ -455,6 +464,7 @@
                                              
                                                 <a  class="text-indigo-600 hover:text-indigo-900 mr-3" asp-action="SupportTicketsDetails" asp-controller="Admin" asp-route-TicketId="@supportTicket.TicketId" asp-route-R="A">View</a>
                                                 <form asp-action="Admin_ResolveSupportTicket" asp-controller="Admin" method="post">
+                                                    <input hidden value="@supportTicket.TicketId" name="TicketId" />
                                                     <button type="submit">
                                                         <a  class="text-green-600 hover:text-green-900 text-decoration-none">Resolve</a>
                                                     </button>

@@ -453,6 +453,9 @@ namespace CineBook.Services
 
             SupportTicket.Status = SupportTicket.TicketStatus.Resolved;
             SupportTicket.ClosedAt = DateTime.UtcNow;
+
+            _DBContext.SupportTickets.Remove(SupportTicket);
+            await _DBContext.SaveChangesAsync();
         }
     }
 }

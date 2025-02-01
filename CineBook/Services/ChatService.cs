@@ -59,12 +59,14 @@ namespace CineBook.Services
                 return new List<Chat>();
 
             var History = await _dbcontext.Chats
-                .Where(chat => chat.UserId == LoggedInUser.Id ) 
+                .Where(chat => chat.UserId == LoggedInUser.Id) 
                 .Include(chat => chat.Messages) 
                 .ToListAsync();
 
             return History;
         }
+
+     
 
         public async Task<List<Message>> GetSameChatMessagesById(string ChatId)
         {
@@ -127,7 +129,8 @@ namespace CineBook.Services
                 UserId = LoggedInUser.Id,
                 SentAt = DateTime.Now,
                 Role =  "Admin" ,
-                ConversationType = ConversationType.LiveChat
+                ConversationType = ConversationType.LiveChat,
+                ChatId = Chat.ChatId
             };
 
             // If the logged-in user is an admin, assign the message with AgentId
@@ -146,9 +149,42 @@ namespace CineBook.Services
             // Save changes to the database only once after modifying the collection
             await _dbcontext.SaveChangesAsync();
         }
+       
 
 
+        public async Task<List<Message>> GetLastMessage()
+        {
+            var LoggedInUser = await _authService.GetLoggedInUserAsync();
 
+            if (LoggedInUser is null)
+                return new List<Message>();  
+
+          
+            var lastChat = await _dbcontext.Messages
+                .Where(x => x.User.Id == LoggedInUser.Id)
+                .OrderByDescending(x => x.SentAt)
+                .FirstOrDefaultAsync();
+
+            if (lastChat == null)
+                return new List<Message>(); 
+
+            
+            var chatMessages = await _dbcontext.Messages
+                .Where(x => x.ChatId == lastChat.ChatId)
+                .ToListAsync();  
+
+           
+            if (chatMessages.Any())
+            {
+               
+                var latestMessage = chatMessages.OrderByDescending(x => x.SentAt).FirstOrDefault();
+
+                
+                return chatMessages.OrderByDescending(x => x.SentAt).ToList(); 
+            }
+
+            return new List<Message>();  
+        }
 
     }
 }

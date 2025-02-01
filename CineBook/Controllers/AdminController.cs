@@ -35,9 +35,18 @@ namespace CineBook.Controllers
 
         public async Task<IActionResult> SupportTicketsDetails(string TicketId)
         {
+            // Retrieve the ticket using the TicketId
             var FoundTicket = await _adminService.GetSupportTicketById(TicketId);
+
+            // If no ticket is found, redirect to the Index page
+            if (FoundTicket is  null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
             return View(FoundTicket);
         }
+
         public async Task<IActionResult> allsupporttickets()
         {
 
@@ -165,9 +174,10 @@ namespace CineBook.Controllers
             var result = await _userManager.ConfirmEmailAsync(user, user.VerificationToken);
             if (result.Succeeded)
             {
-                user.IsVerified = true;
+                user.IsVerified = false;
                 user.VerifiedAt = DateTime.Now;  
                 user.VerificationToken = null;  
+
                 await _userManager.UpdateAsync(user); 
 
                 TempData["Message"] = "Email successfully verified!";
